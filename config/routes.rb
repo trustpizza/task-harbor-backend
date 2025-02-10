@@ -7,4 +7,15 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  # # config/routes.rb
+  resources :project_templates do
+    resources :projects, only: [:create] do
+      resources :tasks, only: [:create, :show, :update, :destroy] do
+        post 'dependencies', on: :member, to: 'tasks#add_dependency'
+        delete 'dependencies/:depends_on_task_id', on: :member, to: 'tasks#remove_dependency'
+      end
+    end
+  end
+  resources :projects, only: [:index, :show]
+
 end
