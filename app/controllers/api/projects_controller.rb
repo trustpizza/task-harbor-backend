@@ -18,7 +18,8 @@ class Api::ProjectsController < ApplicationController
     if @project.save
       render json: @project, status: :created
     else
-      render json: @project.errors, status: :unprocessable_entity
+      error_messages = @project.errors.full_messages
+      render json: { errors: error_messages }, status: :unprocessable_entity
     end
   end
 
@@ -27,14 +28,19 @@ class Api::ProjectsController < ApplicationController
     if @project.update(project_params)
       render json: @project
     else
-      render json: @project.errors, status: :unprocessable_entity
+      error_messages = @project.errors.full_messages
+      render json: { errors: error_messages }, status: :unprocessable_entity
     end
   end
 
   # DELETE /api/projects/:id
   def destroy
-    @project.destroy
-    head :no_content
+    if @project
+      @project.destroy
+      head :no_content # Explicitly send 204
+    else
+      render json: { error: "Project not found" }, status: :not_found # Handle non-existent record
+    end
   end
 
   private
@@ -46,6 +52,6 @@ class Api::ProjectsController < ApplicationController
   end
 
   def project_params
-    params.require(:project).permit(:name, :description, :due_date, :priority)
+    params.require(:project).permit(:name, :description, :due_date)
   end
 end  

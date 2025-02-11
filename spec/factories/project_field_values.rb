@@ -5,25 +5,21 @@ FactoryBot.define do
 
     # Dynamically generate value based on field type
     value do
-      field_type = project_field_definition.field_type
+      field_type = project_field_definition&.field_type || "unknown"
       case field_type
       when "integer"
-        Faker::Number.between(from: 1, to: 100)
+        Faker::Number.between(from: 1, to: 100).to_s  # Convert to string
       when "date"
-        Faker::Date.between(from: Date.today, to: 1.year.from_now)
+        Faker::Date.between(from: Date.today, to: 1.year.from_now).to_s # Convert to string (e.g., "2024-10-27")
       when "boolean"
-        [true, false].sample
+        [true, false].sample.to_s # Convert to string ("true" or "false")
       when "dropdown"
-        # Parse options and select one randomly. Handle if no options.
-        begin
-          options = JSON.parse(project_field_definition.options)
-          options.sample if options.present?
-        rescue JSON::ParserError
-          nil
-        end
+        options = JSON.parse(project_field_definition.options) rescue []
+        options.any? ? options.sample : "default_option" # No change needed here, as it's already a string
       else # string or text
         Faker::Lorem.sentence
       end
     end
+    
   end
 end
