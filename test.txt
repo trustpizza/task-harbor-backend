@@ -1,0 +1,264 @@
+FF.F..FF.FF..F.......
+
+Failures:
+
+  1) Project Field Definitions API GET /projects/:project_id/project_field_definitions returns all project field definitions for a project
+     Failure/Error: expect(response).to have_http_status(200)
+       expected the response to have status code 200 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:10:in `block (3 levels) in <top (required)>'
+
+  2) Project Field Definitions API GET /projects/:project_id/project_field_definitions returns an empty array if no project field definitions exist
+     Failure/Error: expect(response).to have_http_status(200)
+       expected the response to have status code 200 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:27:in `block (3 levels) in <top (required)>'
+
+  3) Project Field Definitions API GET /projects/:project_id/project_field_definitions/:id returns a specific project field definition
+     Failure/Error: expect(response).to have_http_status(200)
+       expected the response to have status code 200 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:43:in `block (3 levels) in <top (required)>'
+
+  4) Project Field Definitions API POST /projects/:project_id/project_field_definitions creates a new project field definition
+     Failure/Error:
+       expect {
+         post "/projects/#{project.id}/project_field_definitions", params: valid_attributes
+       }.to change(ProjectFieldDefinition, :count).by(1)
+
+       expected `ProjectFieldDefinition.count` to have changed by 1, but was changed by 0
+     # ./spec/models/project_field_definitions_spec.rb:67:in `block (3 levels) in <top (required)>'
+
+  5) Project Field Definitions API POST /projects/:project_id/project_field_definitions returns an error if the project field definition is invalid
+     Failure/Error: expect(response).to have_http_status(422) # Unprocessable Entity
+       expected the response to have status code 422 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:82:in `block (3 levels) in <top (required)>'
+
+  6) Project Field Definitions API PATCH /projects/:project_id/project_field_definitions/:id updates a project field definition
+     Failure/Error: expect(response).to have_http_status(200)
+       expected the response to have status code 200 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:98:in `block (3 levels) in <top (required)>'
+
+  7) Project Field Definitions API PATCH /projects/:project_id/project_field_definitions/:id returns an error if the project field definition is invalid
+     Failure/Error: expect(response).to have_http_status(422)
+       expected the response to have status code 422 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:105:in `block (3 levels) in <top (required)>'
+
+  8) Project Field Definitions API DELETE /projects/:project_id/project_field_definitions/:id deletes a project field definition
+     Failure/Error:
+       expect {
+         delete "/projects/#{project.id}/project_field_definitions/#{field_definition.id}"
+       }.to change(ProjectFieldDefinition, :count).by(-1)
+
+       expected `ProjectFieldDefinition.count` to have changed by -1, but was changed by 1
+     # ./spec/models/project_field_definitions_spec.rb:128:in `block (3 levels) in <top (required)>'
+
+Finished in 1.48 seconds (files took 0.81591 seconds to load)
+21 examples, 8 failures
+
+Failed examples:
+
+rspec ./spec/models/project_field_definitions_spec.rb:7 # Project Field Definitions API GET /projects/:project_id/project_field_definitions returns all project field definitions for a project
+rspec ./spec/models/project_field_definitions_spec.rb:25 # Project Field Definitions API GET /projects/:project_id/project_field_definitions returns an empty array if no project field definitions exist
+rspec ./spec/models/project_field_definitions_spec.rb:41 # Project Field Definitions API GET /projects/:project_id/project_field_definitions/:id returns a specific project field definition
+rspec ./spec/models/project_field_definitions_spec.rb:64 # Project Field Definitions API POST /projects/:project_id/project_field_definitions creates a new project field definition
+rspec ./spec/models/project_field_definitions_spec.rb:78 # Project Field Definitions API POST /projects/:project_id/project_field_definitions returns an error if the project field definition is invalid
+rspec ./spec/models/project_field_definitions_spec.rb:96 # Project Field Definitions API PATCH /projects/:project_id/project_field_definitions/:id updates a project field definition
+rspec ./spec/models/project_field_definitions_spec.rb:103 # Project Field Definitions API PATCH /projects/:project_id/project_field_definitions/:id returns an error if the project field definition is invalid
+rspec ./spec/models/project_field_definitions_spec.rb:127 # Project Field Definitions API DELETE /projects/:project_id/project_field_definitions/:id deletes a project field definition
+
+FF.F..FF.FF..F..
+
+Failures:
+
+  1) Project Field Definitions API GET /projects/:project_id/project_field_definitions returns all project field definitions for a project
+     Failure/Error: expect(response).to have_http_status(200)
+       expected the response to have status code 200 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:10:in `block (3 levels) in <top (required)>'
+
+  2) Project Field Definitions API GET /projects/:project_id/project_field_definitions returns an empty array if no project field definitions exist
+     Failure/Error: expect(response).to have_http_status(200)
+       expected the response to have status code 200 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:27:in `block (3 levels) in <top (required)>'
+
+  3) Project Field Definitions API GET /projects/:project_id/project_field_definitions/:id returns a specific project field definition
+     Failure/Error: expect(response).to have_http_status(200)
+       expected the response to have status code 200 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:43:in `block (3 levels) in <top (required)>'
+
+  4) Project Field Definitions API POST /projects/:project_id/project_field_definitions creates a new project field definition
+     Failure/Error:
+       expect {
+         post "/projects/#{project.id}/project_field_definitions", params: valid_attributes
+       }.to change(ProjectFieldDefinition, :count).by(1)
+
+       expected `ProjectFieldDefinition.count` to have changed by 1, but was changed by 0
+     # ./spec/models/project_field_definitions_spec.rb:67:in `block (3 levels) in <top (required)>'
+
+  5) Project Field Definitions API POST /projects/:project_id/project_field_definitions returns an error if the project field definition is invalid
+     Failure/Error: expect(response).to have_http_status(422) # Unprocessable Entity
+       expected the response to have status code 422 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:82:in `block (3 levels) in <top (required)>'
+
+  6) Project Field Definitions API PATCH /projects/:project_id/project_field_definitions/:id updates a project field definition
+     Failure/Error: expect(response).to have_http_status(200)
+       expected the response to have status code 200 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:98:in `block (3 levels) in <top (required)>'
+
+  7) Project Field Definitions API PATCH /projects/:project_id/project_field_definitions/:id returns an error if the project field definition is invalid
+     Failure/Error: expect(response).to have_http_status(422)
+       expected the response to have status code 422 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:105:in `block (3 levels) in <top (required)>'
+
+  8) Project Field Definitions API DELETE /projects/:project_id/project_field_definitions/:id deletes a project field definition
+     Failure/Error:
+       expect {
+         delete "/projects/#{project.id}/project_field_definitions/#{field_definition.id}"
+       }.to change(ProjectFieldDefinition, :count).by(-1)
+
+       expected `ProjectFieldDefinition.count` to have changed by -1, but was changed by 1
+     # ./spec/models/project_field_definitions_spec.rb:128:in `block (3 levels) in <top (required)>'
+
+Finished in 1.73 seconds (files took 0.86327 seconds to load)
+16 examples, 8 failures
+
+Failed examples:
+
+rspec ./spec/models/project_field_definitions_spec.rb:7 # Project Field Definitions API GET /projects/:project_id/project_field_definitions returns all project field definitions for a project
+rspec ./spec/models/project_field_definitions_spec.rb:25 # Project Field Definitions API GET /projects/:project_id/project_field_definitions returns an empty array if no project field definitions exist
+rspec ./spec/models/project_field_definitions_spec.rb:41 # Project Field Definitions API GET /projects/:project_id/project_field_definitions/:id returns a specific project field definition
+rspec ./spec/models/project_field_definitions_spec.rb:64 # Project Field Definitions API POST /projects/:project_id/project_field_definitions creates a new project field definition
+rspec ./spec/models/project_field_definitions_spec.rb:78 # Project Field Definitions API POST /projects/:project_id/project_field_definitions returns an error if the project field definition is invalid
+rspec ./spec/models/project_field_definitions_spec.rb:96 # Project Field Definitions API PATCH /projects/:project_id/project_field_definitions/:id updates a project field definition
+rspec ./spec/models/project_field_definitions_spec.rb:103 # Project Field Definitions API PATCH /projects/:project_id/project_field_definitions/:id returns an error if the project field definition is invalid
+rspec ./spec/models/project_field_definitions_spec.rb:127 # Project Field Definitions API DELETE /projects/:project_id/project_field_definitions/:id deletes a project field definition
+
+FF.F..FF.FF..F..
+
+Failures:
+
+  1) Project Field Definitions API GET /projects/:project_id/project_field_definitions returns all project field definitions for a project
+     Failure/Error: expect(response).to have_http_status(200)
+       expected the response to have status code 200 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:10:in `block (3 levels) in <top (required)>'
+
+  2) Project Field Definitions API GET /projects/:project_id/project_field_definitions returns an empty array if no project field definitions exist
+     Failure/Error: expect(response).to have_http_status(200)
+       expected the response to have status code 200 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:27:in `block (3 levels) in <top (required)>'
+
+  3) Project Field Definitions API GET /projects/:project_id/project_field_definitions/:id returns a specific project field definition
+     Failure/Error: expect(response).to have_http_status(200)
+       expected the response to have status code 200 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:43:in `block (3 levels) in <top (required)>'
+
+  4) Project Field Definitions API POST /projects/:project_id/project_field_definitions creates a new project field definition
+     Failure/Error:
+       expect {
+         post "/projects/#{project.id}/project_field_definitions", params: valid_attributes
+       }.to change(ProjectFieldDefinition, :count).by(1)
+
+       expected `ProjectFieldDefinition.count` to have changed by 1, but was changed by 0
+     # ./spec/models/project_field_definitions_spec.rb:67:in `block (3 levels) in <top (required)>'
+
+  5) Project Field Definitions API POST /projects/:project_id/project_field_definitions returns an error if the project field definition is invalid
+     Failure/Error: expect(response).to have_http_status(422) # Unprocessable Entity
+       expected the response to have status code 422 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:82:in `block (3 levels) in <top (required)>'
+
+  6) Project Field Definitions API PATCH /projects/:project_id/project_field_definitions/:id updates a project field definition
+     Failure/Error: expect(response).to have_http_status(200)
+       expected the response to have status code 200 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:98:in `block (3 levels) in <top (required)>'
+
+  7) Project Field Definitions API PATCH /projects/:project_id/project_field_definitions/:id returns an error if the project field definition is invalid
+     Failure/Error: expect(response).to have_http_status(422)
+       expected the response to have status code 422 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:105:in `block (3 levels) in <top (required)>'
+
+  8) Project Field Definitions API DELETE /projects/:project_id/project_field_definitions/:id deletes a project field definition
+     Failure/Error:
+       expect {
+         delete "/projects/#{project.id}/project_field_definitions/#{field_definition.id}"
+       }.to change(ProjectFieldDefinition, :count).by(-1)
+
+       expected `ProjectFieldDefinition.count` to have changed by -1, but was changed by 1
+     # ./spec/models/project_field_definitions_spec.rb:128:in `block (3 levels) in <top (required)>'
+
+Finished in 1.51 seconds (files took 0.81831 seconds to load)
+16 examples, 8 failures
+
+Failed examples:
+
+rspec ./spec/models/project_field_definitions_spec.rb:7 # Project Field Definitions API GET /projects/:project_id/project_field_definitions returns all project field definitions for a project
+rspec ./spec/models/project_field_definitions_spec.rb:25 # Project Field Definitions API GET /projects/:project_id/project_field_definitions returns an empty array if no project field definitions exist
+rspec ./spec/models/project_field_definitions_spec.rb:41 # Project Field Definitions API GET /projects/:project_id/project_field_definitions/:id returns a specific project field definition
+rspec ./spec/models/project_field_definitions_spec.rb:64 # Project Field Definitions API POST /projects/:project_id/project_field_definitions creates a new project field definition
+rspec ./spec/models/project_field_definitions_spec.rb:78 # Project Field Definitions API POST /projects/:project_id/project_field_definitions returns an error if the project field definition is invalid
+rspec ./spec/models/project_field_definitions_spec.rb:96 # Project Field Definitions API PATCH /projects/:project_id/project_field_definitions/:id updates a project field definition
+rspec ./spec/models/project_field_definitions_spec.rb:103 # Project Field Definitions API PATCH /projects/:project_id/project_field_definitions/:id returns an error if the project field definition is invalid
+rspec ./spec/models/project_field_definitions_spec.rb:127 # Project Field Definitions API DELETE /projects/:project_id/project_field_definitions/:id deletes a project field definition
+
+FF.F..FF.FF..F..
+
+Failures:
+
+  1) Project Field Definitions API GET /projects/:project_id/project_field_definitions returns all project field definitions for a project
+     Failure/Error: expect(response).to have_http_status(200)
+       expected the response to have status code 200 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:10:in `block (3 levels) in <top (required)>'
+
+  2) Project Field Definitions API GET /projects/:project_id/project_field_definitions returns an empty array if no project field definitions exist
+     Failure/Error: expect(response).to have_http_status(200)
+       expected the response to have status code 200 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:27:in `block (3 levels) in <top (required)>'
+
+  3) Project Field Definitions API GET /projects/:project_id/project_field_definitions/:id returns a specific project field definition
+     Failure/Error: expect(response).to have_http_status(200)
+       expected the response to have status code 200 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:43:in `block (3 levels) in <top (required)>'
+
+  4) Project Field Definitions API POST /projects/:project_id/project_field_definitions creates a new project field definition
+     Failure/Error:
+       expect {
+         post "/projects/#{project.id}/project_field_definitions", params: valid_attributes
+       }.to change(ProjectFieldDefinition, :count).by(1)
+
+       expected `ProjectFieldDefinition.count` to have changed by 1, but was changed by 0
+     # ./spec/models/project_field_definitions_spec.rb:67:in `block (3 levels) in <top (required)>'
+
+  5) Project Field Definitions API POST /projects/:project_id/project_field_definitions returns an error if the project field definition is invalid
+     Failure/Error: expect(response).to have_http_status(422) # Unprocessable Entity
+       expected the response to have status code 422 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:82:in `block (3 levels) in <top (required)>'
+
+  6) Project Field Definitions API PATCH /projects/:project_id/project_field_definitions/:id updates a project field definition
+     Failure/Error: expect(response).to have_http_status(200)
+       expected the response to have status code 200 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:98:in `block (3 levels) in <top (required)>'
+
+  7) Project Field Definitions API PATCH /projects/:project_id/project_field_definitions/:id returns an error if the project field definition is invalid
+     Failure/Error: expect(response).to have_http_status(422)
+       expected the response to have status code 422 but it was 404
+     # ./spec/models/project_field_definitions_spec.rb:105:in `block (3 levels) in <top (required)>'
+
+  8) Project Field Definitions API DELETE /projects/:project_id/project_field_definitions/:id deletes a project field definition
+     Failure/Error:
+       expect {
+         delete "/projects/#{project.id}/project_field_definitions/#{field_definition.id}"
+       }.to change(ProjectFieldDefinition, :count).by(-1)
+
+       expected `ProjectFieldDefinition.count` to have changed by -1, but was changed by 1
+     # ./spec/models/project_field_definitions_spec.rb:128:in `block (3 levels) in <top (required)>'
+
+Finished in 1.49 seconds (files took 0.90062 seconds to load)
+16 examples, 8 failures
+
+Failed examples:
+
+rspec ./spec/models/project_field_definitions_spec.rb:7 # Project Field Definitions API GET /projects/:project_id/project_field_definitions returns all project field definitions for a project
+rspec ./spec/models/project_field_definitions_spec.rb:25 # Project Field Definitions API GET /projects/:project_id/project_field_definitions returns an empty array if no project field definitions exist
+rspec ./spec/models/project_field_definitions_spec.rb:41 # Project Field Definitions API GET /projects/:project_id/project_field_definitions/:id returns a specific project field definition
+rspec ./spec/models/project_field_definitions_spec.rb:64 # Project Field Definitions API POST /projects/:project_id/project_field_definitions creates a new project field definition
+rspec ./spec/models/project_field_definitions_spec.rb:78 # Project Field Definitions API POST /projects/:project_id/project_field_definitions returns an error if the project field definition is invalid
+rspec ./spec/models/project_field_definitions_spec.rb:96 # Project Field Definitions API PATCH /projects/:project_id/project_field_definitions/:id updates a project field definition
+rspec ./spec/models/project_field_definitions_spec.rb:103 # Project Field Definitions API PATCH /projects/:project_id/project_field_definitions/:id returns an error if the project field definition is invalid
+rspec ./spec/models/project_field_definitions_spec.rb:127 # Project Field Definitions API DELETE /projects/:project_id/project_field_definitions/:id deletes a project field definition
+
