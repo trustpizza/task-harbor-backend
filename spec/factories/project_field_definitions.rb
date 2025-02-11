@@ -3,6 +3,13 @@ FactoryBot.define do
     name { Faker::Lorem.word } # Or a more descriptive name if needed
     field_type { %w[string integer date boolean dropdown text].sample } # Randomly select a valid field type
     project # Associate with a project
+    required { false }
+    trait :required do
+      required { true }
+    end
+    trait :optional do
+      required { false }
+    end
     options do
       if field_type == "dropdown"
         Faker::Lorem.words(number: 3..5).to_json # Example dropdown options

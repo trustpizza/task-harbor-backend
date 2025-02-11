@@ -10,8 +10,9 @@ Rails.application.routes.draw do
   # # config/routes.rb
   namespace :api do 
     resources :projects do
-      resources :project_field_definitions
-      resources :project_field_values
+      resources :project_field_definitions do
+        resources :project_field_values
+      end
     end
   end
 end

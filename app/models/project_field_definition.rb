@@ -5,6 +5,7 @@ class ProjectFieldDefinition < ApplicationRecord
   validates :name, presence: true, length: { maximum: 255 }
   validates :field_type, presence: true, inclusion: { in: %w[string integer date boolean dropdown text] }
   validate :options_format # Custom validation for options
+  validates :required, inclusion: { in: [true, false] } # Validate the required flag
 
   def options_format
     if options.present?
