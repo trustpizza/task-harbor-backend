@@ -1,0 +1,2 @@
+class ProjectFieldValuesController < ApplicationController
+end

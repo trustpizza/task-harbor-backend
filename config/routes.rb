@@ -9,6 +9,9 @@ Rails.application.routes.draw do
   # root "posts#index"
   # # config/routes.rb
   namespace :api do 
-    resources :projects
+    resources :projects do
+      resources :project_field_definitions, shallow: true # Shallow nesting for update/delete
+      resources :project_field_values
+    end
   end
 end
