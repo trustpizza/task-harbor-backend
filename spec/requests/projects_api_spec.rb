@@ -1,16 +1,16 @@
 require 'rails_helper'
 require 'debug'
 
-def api_url(project_id = nil)
-  base_url = "/api/v1/projects"
-  project_id ? "#{base_url}/#{project_id}" : base_url
-end
 
 RSpec.describe "Projects API", type: :request do
+  def api_url(project_id = nil)
+    base_url = "/api/v1/projects"
+    project_id ? "#{base_url}/#{project_id}" : base_url
+  end
   describe "GET /api/v1/projects" do
     it "returns all projects" do
       create_list(:project, 3)
-      # debugger
+
       get api_url
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq("application/json; charset=utf-8")

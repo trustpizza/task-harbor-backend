@@ -24,7 +24,7 @@ class FieldValue < ApplicationRecord
     when "date"
       errors.add(:value, "must be a valid date") unless Date.parse(value_to_validate) rescue false
     when "boolean"
-      unless value_to_validate.downcase.in?(["true", "false"])
+      unless value_to_validate..to_s.downcase.in?(["true", "false"])
         errors.add(:value, "must be true or false")
       end
     when "string"

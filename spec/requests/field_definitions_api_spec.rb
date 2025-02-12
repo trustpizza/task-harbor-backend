@@ -1,12 +1,12 @@
 require 'rails_helper'
 require 'debug'
 
-def api_url(project_id = project.id, field_definition_id = nil)
-  base_url = "/api/v1/projects/#{project_id}/field_definitions"
-  field_definition_id ? "#{base_url}/#{field_definition_id}" : base_url
-end
 
 RSpec.describe "Field Definitions API", type: :request do
+  def api_url(project_id = project.id, field_definition_id = nil)
+    base_url = "/api/v1/projects/#{project_id}/field_definitions"
+    field_definition_id ? "#{base_url}/#{field_definition_id}" : base_url
+  end
   let!(:project) { create(:project) }
 
   describe "GET /api/v1/projects/:project_id/field_definitions" do
@@ -15,7 +15,7 @@ RSpec.describe "Field Definitions API", type: :request do
       get api_url(project.id), headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq("application/json; charset=utf-8")
-
+      
       json_response = JSON.parse(response.body)
       expect(json_response.length).to eq(3)
 

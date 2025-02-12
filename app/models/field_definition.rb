@@ -3,7 +3,7 @@ class FieldDefinition < ApplicationRecord
   has_many :field_values, dependent: :destroy
 
   validates :name, presence: true, length: { maximum: 255 }
-  validates :field_type, presence: true, inclusion: { in: %w[string integer date boolean dropdown text] }
+  validates :field_type, presence: true, inclusion: { in: %w[string integer date boolean] }
   #Ex:- :default =>''
   validate :options_format # Custom validation for options
   validates :required, inclusion: { in: [true, false] }, allow_nil: true # Validate the required flag nil defaults to False
