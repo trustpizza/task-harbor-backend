@@ -1,15 +1,15 @@
-class ProjectFieldValue < ApplicationRecord
-  belongs_to :project_field_definition
+class FieldValue < ApplicationRecord
+  belongs_to :field_definition
   belongs_to :project
 
   validate :value_format
 
   def value_format
-    return unless project_field_definition&.field_type
+    return unless field_definition&.field_type
 
-    field_type = project_field_definition.field_type
+    field_type = field_definition.field_type
     value_to_validate = self.value.to_s.strip # Ensure it's a string and remove extra spaces
-    required = project_field_definition.required?
+    required = field_definition.required?
 
     if required && value_to_validate.blank?
       errors.add(:value, "is required for this field")
@@ -28,15 +28,15 @@ class ProjectFieldValue < ApplicationRecord
         errors.add(:value, "must be true or false")
       end
     when "string"
-      # if project_field_definition.min_length && value_to_validate.length < project_field_definition.min_length
-      #   errors.add(:value, "must be at least #{project_field_definition.min_length} characters")
+      # if field_definition.min_length && value_to_validate.length < field_definition.min_length
+      #   errors.add(:value, "must be at least #{field_definition.min_length} characters")
       # end
 
-      # if project_field_definition.max_length && value_to_validate.length > project_field_definition.max_length
-      #   errors.add(:value, "cannot exceed #{project_field_definition.max_length} characters")
+      # if field_definition.max_length && value_to_validate.length > field_definition.max_length
+      #   errors.add(:value, "cannot exceed #{field_definition.max_length} characters")
       # end
 
-      # if project_field_definition.format && !(value_to_validate =~ Regexp.new(project_field_definition.format))
+      # if field_definition.format && !(value_to_validate =~ Regexp.new(field_definition.format))
       #   errors.add(:value, "is not in the correct format")
       # end
     else

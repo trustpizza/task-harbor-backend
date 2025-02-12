@@ -10,8 +10,8 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :projects do
-        resources :project_field_definitions do
-          resources :project_field_values # Nested for values
+        resources :field_definitions do
+          resources :field_values # Nested for values
         end
       end
     end

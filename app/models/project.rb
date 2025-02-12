@@ -1,6 +1,6 @@
 class Project < ApplicationRecord
-  has_many :project_field_definitions, dependent: :destroy
-  has_many :project_field_values, through: :project_field_definitions
+  has_many :field_definitions, dependent: :destroy
+  has_many :field_values, dependent: :destroy
 
   validates :name, presence: true, length: { maximum: 255 }
   validates :description, presence: true, length: { maximum: 5000 }

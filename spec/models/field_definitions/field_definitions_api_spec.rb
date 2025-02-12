@@ -1,12 +1,18 @@
 require 'rails_helper'
+require 'debug'
 
-RSpec.describe "Project Field Definitions API", type: :request do
-  let(:project) { create(:project) }
+def api_url(project_id = project.id, field_definition_id = nil)
+  base_url = "/api/v1/projects/#{project_id}/field_definitions"
+  field_definition_id ? "#{base_url}/#{field_definition_id}" : base_url
+end
 
-  describe "GET /api/projects/:project_id/project_field_definitions" do
+RSpec.describe "Field Definitions API", type: :request do
+  let!(:project) { create(:project) }
+
+  describe "GET /api/v1/projects/:project_id/field_definitions" do
     it "returns all project field definitions for a project" do
-      create_list(:project_field_definition, 3, project: project)
-      get "/api/projects/#{project.id}/project_field_definitions" # Added /api
+      create_list(:field_definition, 3, project: project)
+      get api_url(project.id), headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq("application/json; charset=utf-8")
 
@@ -21,23 +27,23 @@ RSpec.describe "Project Field Definitions API", type: :request do
     end
 
     it "returns an empty array if no project field definitions exist" do
-      get "/api/projects/#{project.id}/project_field_definitions" # Added /api
+      get api_url(project.id), headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(200)
       json_response = JSON.parse(response.body)
       expect(json_response).to be_empty
     end
 
     it "returns a 404 error if the project doesn't exist" do
-      get "/api/projects/99999/project_field_definitions" # Added /api
+      get api_url(999999), headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(404)
     end
   end
 
-  describe "GET /api/projects/:project_id/project_field_definitions/:id" do
-    let(:field_definition) { create(:project_field_definition, project: project) }
+  describe "GET /api/v1/projects/:project_id/field_definitions/:id" do
+    let(:field_definition) { create(:field_definition, project: project) }
 
     it "returns a specific project field definition" do
-      get "/api/projects/#{project.id}/project_field_definitions/#{field_definition.id}" # Added /api
+      get api_url(project.id, field_definition.id), headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(200)
       json_response = JSON.parse(response.body)
       expect(json_response["id"]).to eq(field_definition.id)
@@ -46,26 +52,28 @@ RSpec.describe "Project Field Definitions API", type: :request do
     end
 
     it "returns a 404 error if the project field definition doesn't exist" do
-      get "/api/projects/#{project.id}/project_field_definitions/99999" # Added /api
+      get "/api/v1/projects/#{project.id}/field_definitions/99999", headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(404)
     end
 
     it "returns a 404 error if the project field definition doesn't belong to the project" do
       another_project = create(:project)
-      another_field_definition = create(:project_field_definition, project: another_project)
-      get "/api/projects/#{project.id}/project_field_definitions/#{another_field_definition.id}" # Added /api
+      another_field_definition = create(:field_definition, project: another_project)
+      get "/api/v1/projects/#{project.id}/field_definitions/#{another_field_definition.id}", headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(404)
     end
   end
 
-  describe "POST /api/projects/:project_id/project_field_definitions" do
+  describe "POST /api/v1/projects/:project_id/field_definitions" do
     it "creates a new project field definition" do
       valid_attributes = { name: "New Field", field_type: "string" }
 
       expect {
-        post "/api/projects/#{project.id}/project_field_definitions", params: valid_attributes # Added /api
-      }.to change(ProjectFieldDefinition, :count).by(1)
-
+        post api_url(project.id), 
+             params: { field_definition: valid_attributes }.to_json,
+             headers: { 'Content-Type': 'application/json' }
+      }.to change(FieldDefinition, :count).by(1)
+    
       expect(response).to have_http_status(201)
       json_response = JSON.parse(response.body)
       expect(json_response["name"]).to eq("New Field")
@@ -76,67 +84,81 @@ RSpec.describe "Project Field Definitions API", type: :request do
     it "returns an error if the project field definition is invalid" do
       invalid_attributes = { name: nil, field_type: "string" }
 
-      post "/api/projects/#{project.id}/project_field_definitions", params: invalid_attributes # Added /api
+      post api_url(project.id), 
+           params: { field_definition: invalid_attributes }.to_json, 
+           headers: { 'Content-Type': 'application/json' }
+  
       expect(response).to have_http_status(422)
       json_response = JSON.parse(response.body)
       expect(json_response["errors"]).to be_present
     end
 
     it "returns a 404 error if the project doesn't exist" do
-      post "/api/projects/99999/project_field_definitions", params: { name: "New Field", field_type: "string" } # Added /api
+      post api_url(999999), 
+           params: { name: "New Field", field_type: "string" }.to_json,
+           headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(404)
     end
   end
 
-  describe "PATCH /api/projects/:project_id/project_field_definitions/:id" do
-    let(:field_definition) { create(:project_field_definition, project: project) }
+  describe "PATCH /api/v1/projects/:project_id/field_definitions/:id" do
+    let(:field_definition) { create(:field_definition, project: project) }
 
     it "updates a project field definition" do
-      patch "/api/projects/#{project.id}/project_field_definitions/#{field_definition.id}", params: { name: "Updated Field" } # Added /api
+      patch api_url(project.id, field_definition.id), 
+            params: { field_definition: { name: "Updated Field" } }.to_json, 
+            headers: { 'Content-Type': 'application/json' }
+
       expect(response).to have_http_status(200)
       json_response = JSON.parse(response.body)
       expect(json_response["name"]).to eq("Updated Field")
     end
 
     it "returns an error if the project field definition is invalid" do
-      patch "/api/projects/#{project.id}/project_field_definitions/#{field_definition.id}", params: { name: nil } # Added /api
+      patch api_url(project.id, field_definition.id), 
+            params: { name: nil }.to_json, 
+            headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(422)
       json_response = JSON.parse(response.body)
       expect(json_response["errors"]).to be_present
     end
 
     it "returns a 404 error if the project field definition doesn't exist" do
-      patch "/api/projects/#{project.id}/project_field_definitions/99999", params: { name: "Updated Field" } # Added /api
+      patch "/api/v1/projects/#{project.id}/field_definitions/99999", 
+            params: { name: "Updated Field" }.to_json, 
+            headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(404)
     end
 
     it "returns a 404 error if the project field definition doesn't belong to the project" do
       another_project = create(:project)
-      another_field_definition = create(:project_field_definition, project: another_project)
-      patch "/api/projects/#{project.id}/project_field_definitions/#{another_field_definition.id}", params: { name: "Updated Field" } # Added /api
+      another_field_definition = create(:field_definition, project: another_project)
+      patch "/api/v1/projects/#{project.id}/field_definitions/#{another_field_definition.id}", 
+            params: { name: "Updated Field" }.to_json, 
+            headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(404)
     end
   end
 
-  describe "DELETE /api/projects/:project_id/project_field_definitions/:id" do
-    let!(:field_definition) { create(:project_field_definition, project: project) }
+  describe "DELETE /api/v1/projects/:project_id/field_definitions/:id" do
+    let!(:field_definition) { create(:field_definition, project: project) }
 
     it "deletes a project field definition" do
       expect {
-        delete "/api/projects/#{project.id}/project_field_definitions/#{field_definition.id}" # Added /api
-      }.to change(ProjectFieldDefinition, :count).by(-1)
+        delete api_url(project.id, field_definition.id), headers: { 'Content-Type': 'application/json' }
+      }.to change(FieldDefinition, :count).by(-1)
       expect(response).to have_http_status(204)
     end
 
     it "returns a 404 error if the project field definition doesn't exist" do
-      delete "/api/projects/#{project.id}/project_field_definitions/99999" # Added /api
+      delete "/api/v1/projects/#{project.id}/field_definitions/99999", headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(404)
     end
 
     it "returns a 404 error if the project field definition doesn't belong to the project" do
       another_project = create(:project)
-      another_field_definition = create(:project_field_definition, project: another_project)
-      delete "/api/projects/#{project.id}/project_field_definitions/#{another_field_definition.id}" # Added /api
+      another_field_definition = create(:field_definition, project: another_project)
+      delete "/api/v1/projects/#{project.id}/field_definitions/#{another_field_definition.id}", headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(404)
     end
   end

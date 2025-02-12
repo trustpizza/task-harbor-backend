@@ -9,15 +9,15 @@ class Api::V1::ProjectsController < ApplicationController
 
   # GET /api/v1/projects/:id
   def show
-    render json: @project, include: [:project_field_definitions, :project_field_values] # Include definitions if needed
+    render json: @project, include: [:field_definitions, :field_values] # Include definitions if needed
   end
 
   # POST /api/v1/projects
   def create
     @project = Project.new(project_params)
-
+    # debugger
     if @project.save
-      render json: @project, status: :created, location: api_v1_project_url(@project) # Add location header
+      render json: @project, status: :created, location: [:api, :v1, @project]#api_v1_project_url(@project)
     else
       render json: { errors: @project.errors.full_messages }, status: :unprocessable_entity
     end
