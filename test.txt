@@ -1,56 +1,79 @@
-......F......FFFF.F.
+*********ProjectFieldValue before save: #<ProjectFieldValue id: nil, value: "Quasi autem quis quam.", project_id: 1, project_field_definition_id: 1, created_at: nil, updated_at: nil>
+Errors before save: []
+false
+.ProjectFieldValue before save: #<ProjectFieldValue id: nil, value: nil, project_id: 2, project_field_definition_id: 3, created_at: nil, updated_at: nil>
+Errors before save: []
+true
+FProjectFieldValue before save: #<ProjectFieldValue id: nil, value: nil, project_id: 3, project_field_definition_id: 5, created_at: nil, updated_at: nil>
+Errors before save: []
+false
+.****
+
+Pending: (Failures listed here are expected and do not affect your suite's status)
+
+  1) ProjectFieldValue integration with Project and ProjectFieldDefinition creates a project_field_value and associates it with a project and field definition
+     # No reason given
+     # ./spec/models/project_field_value_spec.rb:8
+
+  2) ProjectFieldValue integration with Project and ProjectFieldDefinition updates a project_field_value
+     # No reason given
+     # ./spec/models/project_field_value_spec.rb:34
+
+  3) ProjectFieldValue integration with Project and ProjectFieldDefinition deletes a project_field_value
+     # No reason given
+     # ./spec/models/project_field_value_spec.rb:46
+
+  4) ProjectFieldValue integration with Project and ProjectFieldDefinition cascades delete project_field_values when associated project is destroyed
+     # No reason given
+     # ./spec/models/project_field_value_spec.rb:57
+
+  5) ProjectFieldValue integration with Project and ProjectFieldDefinition cascades delete project_field_values when associated project_field_definition is destroyed
+     # No reason given
+     # ./spec/models/project_field_value_spec.rb:69
+
+  6) Project Field Values API GET /api/projects/:project_id/project_field_definitions/:project_field_definition_id/project_field_values returns all project field values for a field definition
+     # No reason given
+     # ./spec/models/project_field_value_spec.rb:88
+
+  7) Project Field Values API GET /api/projects/:project_id/project_field_definitions/:project_field_definition_id/project_field_values returns an empty array if no project field values exist
+     # No reason given
+     # ./spec/models/project_field_value_spec.rb:104
+
+  8) Project Field Values API GET /api/projects/:project_id/project_field_definitions/:project_field_definition_id/project_field_values/:id returns a specific project field value
+     # No reason given
+     # ./spec/models/project_field_value_spec.rb:115
+
+  9) Project Field Values API GET /api/projects/:project_id/project_field_definitions/:project_field_definition_id/project_field_values/:id returns a 404 error if the project field value doesn't exist
+     # No reason given
+     # ./spec/models/project_field_value_spec.rb:124
+
+  10) Project Field Values API PATCH /api/projects/:project_id/project_field_definitions/:project_field_definition_id/project_field_values/:id updates a project field value
+     # No reason given
+     # ./spec/models/project_field_value_spec.rb:177
+
+  11) Project Field Values API PATCH /api/projects/:project_id/project_field_definitions/:project_field_definition_id/project_field_values/:id returns a 404 error if the project field value doesn't exist
+     # No reason given
+     # ./spec/models/project_field_value_spec.rb:191
+
+  12) Project Field Values API DELETE /api/projects/:project_id/project_field_definitions/:project_field_definition_id/project_field_values/:id deletes a project field value
+     # No reason given
+     # ./spec/models/project_field_value_spec.rb:200
+
+  13) Project Field Values API DELETE /api/projects/:project_id/project_field_definitions/:project_field_definition_id/project_field_values/:id returns a 404 error if the project field value doesn't exist
+     # No reason given
+     # ./spec/models/project_field_value_spec.rb:207
 
 Failures:
 
-  1) Project associations has many project_field_values
-     Failure/Error: create(:project_field_value, project: project)
-
-     ActiveRecord::RecordInvalid:
-       Validation failed: Value must be a boolean (true/false)
-     # ./spec/models/projects_spec.rb:44:in `block (3 levels) in <top (required)>'
-
-  2) Projects API POST /api/projects creates a new project
-     Failure/Error:
-       expect {
-         post "/api/projects", params: valid_attributes
-       }.to change(Project, :count).by(1)
-
-       expected `Project.count` to have changed by 1, but was changed by 0
-     # ./spec/models/projects_spec.rb:126:in `block (3 levels) in <top (required)>'
-
-  3) Projects API POST /api/projects returns an error if the project is invalid
+  1) Project Field Values API POST /api/projects/:project_id/project_field_definitions/:project_field_definition_id/project_field_values returns an error if the project field value is invalid (required field)
      Failure/Error: expect(response).to have_http_status(422)
-       expected the response to have status code 422 but it was 400
-     # ./spec/models/projects_spec.rb:142:in `block (3 levels) in <top (required)>'
+       expected the response to have status code 422 but it was 201
+     # ./spec/models/project_field_value_spec.rb:153:in `block (3 levels) in <top (required)>'
 
-  4) Projects API PATCH /api/projects/:id updates a project
-     Failure/Error: expect(response).to have_http_status(200)
-       expected the response to have status code 200 but it was 400
-     # ./spec/models/projects_spec.rb:153:in `block (3 levels) in <top (required)>'
-
-  5) Projects API PATCH /api/projects/:id returns an error if the project is invalid
-     Failure/Error: expect(response).to have_http_status(422)
-       expected the response to have status code 422 but it was 400
-     # ./spec/models/projects_spec.rb:160:in `block (3 levels) in <top (required)>'
-
-  6) Projects API DELETE /api/projects/:id deletes a project
-     Failure/Error:
-       expect {
-         delete "/api/projects/#{project.id}"
-       }.to change(Project, :count).by(-1)
-
-       expected `Project.count` to have changed by -1, but was changed by 0
-     # ./spec/models/projects_spec.rb:175:in `block (3 levels) in <top (required)>'
-
-Finished in 0.86083 seconds (files took 0.88882 seconds to load)
-20 examples, 6 failures
+Finished in 0.2809 seconds (files took 0.90534 seconds to load)
+16 examples, 1 failure, 13 pending
 
 Failed examples:
 
-rspec ./spec/models/projects_spec.rb:42 # Project associations has many project_field_values
-rspec ./spec/models/projects_spec.rb:123 # Projects API POST /api/projects creates a new project
-rspec ./spec/models/projects_spec.rb:138 # Projects API POST /api/projects returns an error if the project is invalid
-rspec ./spec/models/projects_spec.rb:151 # Projects API PATCH /api/projects/:id updates a project
-rspec ./spec/models/projects_spec.rb:158 # Projects API PATCH /api/projects/:id returns an error if the project is invalid
-rspec ./spec/models/projects_spec.rb:174 # Projects API DELETE /api/projects/:id deletes a project
+rspec ./spec/models/project_field_value_spec.rb:147 # Project Field Values API POST /api/projects/:project_id/project_field_definitions/:project_field_definition_id/project_field_values returns an error if the project field value is invalid (required field)
 

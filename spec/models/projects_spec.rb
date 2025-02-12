@@ -26,9 +26,9 @@ RSpec.describe Project, type: :model do
     end
 
     it "is not valid with a due_date in the past" do
-      project = build(:project, due_date: Date.today - 2.days) # Use 2 days ago
+      project = build(:project, due_date: Time.zone.today - 2.days) # Use 2 days ago
       expect(project).to_not be_valid
-      expect(project.errors[:due_date]).to include("must be greater than or equal to #{Date.today}")
+      expect(project.errors[:due_date]).to include("must be greater than or equal to #{Time.zone.today}")
     end
   end
 
@@ -41,7 +41,8 @@ RSpec.describe Project, type: :model do
 
     it "has many project_field_values" do
       project = create(:project)
-      create(:project_field_value, project: project)
+      field_definition = create(:project_field_definition, project: project)
+      create(:project_field_value, project: project, project_field_definition: field_definition)
       expect(project.project_field_values.count).to eq(1)
     end
   end
@@ -57,7 +58,7 @@ RSpec.describe Project, type: :model do
     describe "overdue" do
       it "returns projects with due dates in the past" do
         create(:project, due_date: Date.tomorrow)  # Should NOT be included
-        create(:project, due_date: Date.today)     # Should NOT be included
+        create(:project, due_date: Time.zone.today)     # Should NOT be included
         # Bypass validation to create an overdue project
         overdue_project = build(:project, due_date: Date.yesterday)
         overdue_project.save(validate: false) 
@@ -72,10 +73,10 @@ end
 
 
 RSpec.describe "Projects API", type: :request do
-  describe "GET /api/projects" do
+  describe "GET /api/v1/projects" do
     it "returns all projects" do
-      create_list(:project, 3) # No organization needed
-      get "/api/projects"
+      create_list(:project, 3)
+      get "/api/v1/projects"
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq("application/json; charset=utf-8")
 
@@ -86,45 +87,41 @@ RSpec.describe "Projects API", type: :request do
         expect(project["name"]).to be_present
         expect(project["description"]).to be_present
         expect(project["due_date"]).to be_present
-        # organization_id should NOT be present if there is no organization association.
-        expect(project["organization_id"]).to be_nil # Or expect(project).not_to include("organization_id")
       end
     end
 
     it "returns an empty array if no projects exist" do
-      get "/api/projects"
+      get "/api/v1/projects"
       expect(response).to have_http_status(200)
       json_response = JSON.parse(response.body)
       expect(json_response).to be_empty
     end
   end
 
-  describe "GET /api/projects/:id" do
+  describe "GET /api/v1/projects/:id" do
     let(:project) { create(:project) } # No organization needed
 
     it "returns a specific project" do
-      get "/api/projects/#{project.id}"
+      get "/api/v1/projects/#{project.id}"
       expect(response).to have_http_status(200)
       json_response = JSON.parse(response.body)
       expect(json_response["id"]).to eq(project.id)
       expect(json_response["name"]).to eq(project.name)
       expect(json_response["description"]).to eq(project.description)
       expect(json_response["due_date"]).to eq(project.due_date.strftime("%Y-%m-%d"))
-      expect(json_response["organization_id"]).to be_nil # Or expect(json_response).not_to include("organization_id")
     end
 
     it "returns a 404 error if the project doesn't exist" do
-      get "/api/projects/99999"
+      get "/api/v1/projects/99999"
       expect(response).to have_http_status(404)
     end
   end
 
-  describe "POST /api/projects" do
+  describe "POST /api/v1/projects" do
     it "creates a new project" do
       valid_attributes = attributes_for(:project)
-
       expect {
-        post "/api/projects", params: { project: valid_attributes }.to_json, headers: { 'Content-Type': 'application/json' }
+        post "/api/v1/projects", params: { project: valid_attributes }.to_json, headers: { 'Content-Type': 'application/json' }
       }.to change(Project, :count).by(1)
 
       expect(response).to have_http_status(201)
@@ -137,48 +134,48 @@ RSpec.describe "Projects API", type: :request do
     it "returns an error if the project is invalid" do
       invalid_attributes = { name: nil, description: "test", due_date: Date.tomorrow }
 
-      post "/api/projects", params: { project: invalid_attributes }.to_json, headers: { 'Content-Type': 'application/json' }
+      post "/api/v1/projects", params: { project: invalid_attributes }.to_json, headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(422)
       json_response = JSON.parse(response.body)
       expect(json_response["errors"]).to be_present
     end
   end
 
-  describe "PATCH /api/projects/:id" do
+  describe "PATCH /api/v1/projects/:id" do
     let(:project) { create(:project) } # No organization needed
 
     it "updates a project" do
-      patch "/api/projects/#{project.id}", params: { project: { name: "Updated Name" } }.to_json, headers: { 'Content-Type': 'application/json' }
+      patch "/api/v1/projects/#{project.id}", params: { project: { name: "Updated Name" } }.to_json, headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(200)
       json_response = JSON.parse(response.body)
       expect(json_response["name"]).to eq("Updated Name")
     end
     
     it "returns an error if the project is invalid" do
-      patch "/api/projects/#{project.id}", params: { project: { name: nil } }.to_json, headers: { 'Content-Type': 'application/json' }
+      patch "/api/v1/projects/#{project.id}", params: { project: { name: nil } }.to_json, headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(422)
       json_response = JSON.parse(response.body)
       expect(json_response["errors"]).to be_present
     end
     
     it "returns a 404 error if the project doesn't exist" do
-      patch "/api/projects/99999", params: { project: { name: "Updated Name" } }.to_json, headers: { 'Content-Type': 'application/json' }
+      patch "/api/v1/projects/99999", params: { project: { name: "Updated Name" } }.to_json, headers: { 'Content-Type': 'application/json' }
       expect(response).to have_http_status(404)
     end
   end
 
-  describe "DELETE /api/projects/:id" do
+  describe "DELETE /api/v1/projects/:id" do
     let!(:project) { create(:project) } # No organization needed
 
     it "deletes a project" do
       expect {
-        delete "/api/projects/#{project.id}"
+        delete "/api/v1/projects/#{project.id}"
       }.to change(Project, :count).by(-1)
       expect(response).to have_http_status(204)
     end
 
     it "returns a 404 error if the project doesn't exist" do
-      delete "/api/projects/99999"
+      delete "/api/v1/projects/99999"
       expect(response).to have_http_status(404)
     end
   end

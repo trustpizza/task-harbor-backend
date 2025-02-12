@@ -10,7 +10,7 @@ FactoryBot.define do
       when "integer"
         Faker::Number.between(from: 1, to: 100).to_s
       when "date"
-        Faker::Date.between(from: Date.today, to: 1.year.from_now).to_s
+        Faker::Date.between(from: Time.zone.today, to: 1.year.from_now).to_s
       when "boolean"
         [true, false].sample.to_s
       when "dropdown"
