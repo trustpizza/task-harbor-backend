@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_13_133540) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_13_175309) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -18,22 +18,26 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_13_133540) do
     t.string "name"
     t.string "field_type"
     t.text "options"
-    t.bigint "project_id", null: false
     t.boolean "required", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "bgColor", default: "base"
-    t.index ["project_id"], name: "index_field_definitions_on_project_id"
   end
 
   create_table "field_values", force: :cascade do |t|
     t.text "value"
-    t.bigint "project_id", null: false
-    t.bigint "field_definition_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["field_definition_id"], name: "index_field_values_on_field_definition_id"
-    t.index ["project_id"], name: "index_field_values_on_project_id"
+    t.bigint "field_id", null: false
+    t.index ["field_id"], name: "index_field_values_on_field_id"
+  end
+
+  create_table "fields", force: :cascade do |t|
+    t.bigint "project_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "field_definition_id", null: false
+    t.index ["field_definition_id"], name: "index_fields_on_field_definition_id"
+    t.index ["project_id"], name: "index_fields_on_project_id"
   end
 
   create_table "projects", force: :cascade do |t|
@@ -44,7 +48,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_13_133540) do
     t.datetime "updated_at", null: false
   end
 
-  add_foreign_key "field_definitions", "projects"
-  add_foreign_key "field_values", "field_definitions"
-  add_foreign_key "field_values", "projects"
+  add_foreign_key "field_values", "fields"
+  add_foreign_key "fields", "field_definitions"
+  add_foreign_key "fields", "projects"
 end

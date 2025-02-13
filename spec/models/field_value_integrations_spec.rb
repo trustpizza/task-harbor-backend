@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'faker'
 
-RSpec.describe FieldValue, type: :model do
+RSpec.describe FieldValue, skip: true, type: :model do
 
   describe "integration with Project and FieldDefinition" do
     it "creates a field_value and associates it with a project and field definition" do

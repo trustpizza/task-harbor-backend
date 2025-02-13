@@ -1,8 +1,6 @@
 FactoryBot.define do
   factory :field_value do
-    project
-    field_definition
-
+    association :field
     # Dynamically generate value based on field type, but allow nil
     value do
       field_type = field_definition&.field_type || "unknown"

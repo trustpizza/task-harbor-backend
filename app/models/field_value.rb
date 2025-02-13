@@ -1,6 +1,6 @@
 class FieldValue < ApplicationRecord
-  belongs_to :field_definition
-  belongs_to :project
+  belongs_to :field
+  delegate :field_definition, to: :field
 
   validate :value_format
 

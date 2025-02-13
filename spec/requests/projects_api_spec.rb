@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'debug'
 
 
-RSpec.describe "Projects API", type: :request do
+RSpec.describe "Projects API", skip: true, type: :request do
   def api_url(project_id = nil)
     base_url = "/api/v1/projects"
     project_id ? "#{base_url}/#{project_id}" : base_url

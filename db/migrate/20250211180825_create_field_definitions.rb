@@ -4,7 +4,6 @@ class CreateFieldDefinitions < ActiveRecord::Migration[7.1]
       t.string :name
       t.string :field_type
       t.text :options
-      t.references :project, null: false, foreign_key: true
       t.boolean :required, null: false, :default => false
 
       t.timestamps

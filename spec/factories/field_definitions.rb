@@ -1,8 +1,7 @@
 FactoryBot.define do
   factory :field_definition do
     name { Faker::Lorem.word }
-    field_type { %w[string integer date boolean].sample } 
-    project { association(:project) }
+    field_type { %w[string integer date boolean].sample }
     required { false }
 
     trait :required do
