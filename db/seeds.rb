@@ -23,6 +23,8 @@ end
 projects = Project.all # Get all created projects
 
 projects.each do |project|
+  VALID_COLORS = ["base", "white", "lightGray", "darkGray", "pink", "rose", "green", "emerald", "teal", "blue", "sky", "indigo", "purple", "violet", "red", "orange", "yellow", "amber"]
+
   # Create some field definitions for each project
   3.times do
     field_type = %w[string integer date boolean].sample
@@ -39,6 +41,7 @@ projects.each do |project|
       name: Faker::Lorem.word,
       field_type: field_type,
       required: [true, false].sample,
+      bgColor: VALID_COLORS.sample,
       options: options # Store options as JSON string
     )
 
@@ -57,6 +60,7 @@ projects.each do |project|
               else # string or text
                 Faker::Lorem.sentence
               end
+      # debugger
 
       field_definition.field_values.create!(
         project: project, # Associate with the project

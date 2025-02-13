@@ -4,6 +4,31 @@ class FieldValue < ApplicationRecord
 
   validate :value_format
 
+  # Define the attribute type casting based on field_definition.field_type
+  def value
+    val = read_attribute(:value) # Get the raw value from the database
+
+    return nil unless field_definition&.field_type && val.present?
+
+    case field_definition.field_type
+    when "integer"
+      val.to_i if val.present? # Cast to integer
+    when "date"
+      Date.parse(val) rescue nil if val.present? # Cast to date
+    when "boolean"
+      val.downcase == 'true' if val.present? # Cast to boolean (true/false)
+    # when "string"  No casting needed for strings, handled by default
+    else
+      val # Return raw value for unsupported types
+    end
+
+  end
+
+  def value=(val)
+    super(val)
+  end
+
+
   def value_format
     return unless field_definition&.field_type
 
@@ -24,23 +49,12 @@ class FieldValue < ApplicationRecord
     when "date"
       errors.add(:value, "must be a valid date") unless Date.parse(value_to_validate) rescue false
     when "boolean"
-      unless value_to_validate..to_s.downcase.in?(["true", "false"])
-        errors.add(:value, "must be true or false")
+      unless value_to_validate.to_s.downcase.in?(["true", "false"])
+        errors.add(:value, "must be true or false.  Instead got #{value_to_validate.to_s}")
       end
     when "string"
-      # if field_definition.min_length && value_to_validate.length < field_definition.min_length
-      #   errors.add(:value, "must be at least #{field_definition.min_length} characters")
-      # end
-
-      # if field_definition.max_length && value_to_validate.length > field_definition.max_length
-      #   errors.add(:value, "cannot exceed #{field_definition.max_length} characters")
-      # end
-
-      # if field_definition.format && !(value_to_validate =~ Regexp.new(field_definition.format))
-      #   errors.add(:value, "is not in the correct format")
-      # end
     else
-      errors.add(:field_type, "is not supported")
+      errors.add(:field_type, "is not supported: #{field_type}")
     end
   end
 end
