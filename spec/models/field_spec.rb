@@ -17,25 +17,12 @@ RSpec.describe Field, type: :model do
       expect(FieldValue.count).to eq(0)
     end
 
-    it 'belongs to a project (optional)' do
+    it 'belongs to a project' do
       project = create(:project)
       field = create(:field, project: project)
       expect(field.project).to eq(project)
     end
 
-    it 'belongs to a task (optional)' do
-      task = create(:task)
-      field = create(:field, task: task)
-      expect(field.task).to eq(task)
-    end
-
-    it 'can belong to both project and task' do
-      project = create(:project)
-      task = create(:task, project: project)
-      field = create(:field, project: project, task: task)
-      expect(field.project).to eq(project)
-      expect(field.task).to eq(task)
-    end
   end
 
   describe 'validations' do
@@ -47,13 +34,13 @@ RSpec.describe Field, type: :model do
     it 'is not valid without a field definition' do
       field = build(:field, field_definition: nil)
       expect(field).to_not be_valid
-      expect(field.errors[:field_definition]).to include("can't be blank")
+      expect(field.errors[:field_definition]).to include("must exist")
     end
 
     it 'is not valid without a project' do
       field = build(:field, project: nil)
       expect(field).to_not be_valid
-      expect(field.errors[:project]).to include("can't be blank")
+      expect(field.errors[:project]).to include("must exist")
     end
   end
 end
