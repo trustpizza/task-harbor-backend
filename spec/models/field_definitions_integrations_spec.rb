@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe FieldDefinition, skip: true,  type: :model do
+RSpec.describe FieldDefinition,  type: :model do
   describe "validations" do
     context "name" do
       it "is invalid if blank" do
@@ -113,16 +113,12 @@ RSpec.describe FieldDefinition, skip: true,  type: :model do
 
   # Example of testing associations (if needed)
   describe "associations" do
-    it "belongs to a project" do
-      project = create(:project) # Assuming you have a Project factory
-      field_definition = create(:field_definition, project: project)
-      expect(field_definition.project).to eq(project)
+
+    it "has many field" do
+      field_definition = create(:field_definition)
+      create_list(:field, 3, field_definition: field_definition)
+      expect(field_definition.fields.count).to eq(3)
     end
 
-    it "has many field values" do
-      field_definition = create(:field_definition)
-      create_list(:field_value, 3, field_definition: field_definition)
-      expect(field_definition.field_values.count).to eq(3)
-    end
   end
 end

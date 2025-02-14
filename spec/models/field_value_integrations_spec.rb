@@ -1,80 +1,140 @@
 require 'rails_helper'
-require 'faker'
+require 'debug'
 
-RSpec.describe FieldValue, skip: true, type: :model do
+RSpec.describe FieldValue, type: :model do
+  let(:field_definition) { create(:field_definition, field_type: "string") } # Default to string
+  let(:field) { create(:field, field_definition: field_definition) }
+  let(:field_value) { create(:field_value, field: field) }
 
-  describe "integration with Project and FieldDefinition" do
-    it "creates a field_value and associates it with a project and field definition" do
-      project = create(:project)
-      field_definition = create(:field_definition, project: project, field_type: "string")
-
-      field_value = FieldValue.new(
-        project: project,
-        field_definition: field_definition,
-        value: "Integration Test Value"
-      )
-
-      expect(field_value).to be_valid
-      expect(field_value.save).to be true  # Save the record
-      expect(field_value.persisted?).to be true # Check if it's persisted in the database
-
-      # Verify associations are set correctly
-      expect(field_value.project).to eq(project)
-      expect(field_value.field_definition).to eq(field_definition)
-
-      # Retrieve from the database and verify
-      retrieved_value = FieldValue.find(field_value.id)
-      expect(retrieved_value.value).to eq("Integration Test Value")
-      expect(retrieved_value.project).to eq(project)
-      expect(retrieved_value.field_definition).to eq(field_definition)
+  describe "associations" do
+    it "Associates to field" do
+      expect(field_value.field).to be_valid
     end
 
+    it "Delegates field_definition to field" do
+      expect(field_value.field_definition).to equal(field.field_definition)
+    end
+  end
 
-    it "updates a field_value" do
-      project = create(:project)
-      field_definition = create(:field_definition, project: project, field_type: "string")
-      field_value = create(:field_value, project: project, field_definition: field_definition, value: "Original Value")
+  describe "validations" do
+    context "required fields" do
+      let(:field_definition) { create(:field_definition, field_type: "string", required: true) }
 
-      field_value.value = "Updated Value"
-      expect(field_value.save).to be true
+      it "is invalid without a value" do
+        field_value.value = nil
+        expect(field_value).to be_invalid
+        expect(field_value.errors[:value]).to include("is required for this field")
+      end
 
-      retrieved_value = FieldValue.find(field_value.id)
-      expect(retrieved_value.value).to eq("Updated Value")
+      it "is valid with a value" do
+        field_value.value = "some value"
+        expect(field_value).to be_valid
+      end
     end
 
-    it "deletes a field_value" do
-      project = create(:project)
-      field_definition = create(:field_definition, project: project, field_type: "string")
-      field_value = create(:field_value, project: project, field_definition: field_definition, value: "To be deleted")
+    context "integer fields" do
+      let(:field_definition) { create(:field_definition, field_type: "integer") }
 
-      expect(FieldValue.exists?(field_value.id)).to be true # Check if it exists before delete
+      it "is valid with an integer value" do
+        field_value.value = "123"
+        expect(field_value).to be_valid
+      end
 
-      field_value.destroy
-      expect(FieldValue.exists?(field_value.id)).to be false # Check if it's gone after delete
+      it "is invalid with a non-integer value" do
+        field_value.value = "abc"
+        expect(field_value).to be_invalid
+        expect(field_value.errors[:value]).to include("must be an integer")
+      end
+
+      it "is valid with a negative integer value" do
+        field_value.value = "-123"
+        expect(field_value).to be_valid
+      end
     end
 
-    it "cascades delete field_values when associated project is destroyed" do
-        project = create(:project)
-        field_definition = create(:field_definition, project: project, field_type: "string")
-        field_value = create(:field_value, project: project, field_definition: field_definition)
+    context "date fields" do
+      let(:field_definition) { create(:field_definition, field_type: "date") }
 
-        expect(FieldValue.exists?(field_value.id)).to be true
+      it "is valid with a valid date value" do
+        field_value.value = "2024-03-15"
+        expect(field_value).to be_valid
+      end
 
-        project.destroy
-
-        expect(FieldValue.exists?(field_value.id)).to be false
+      it "is invalid with an invalid date value" do
+        field_value.value = "invalid date"
+        expect(field_value).to be_invalid
+        expect(field_value.errors[:value]).to include("must be a valid date")
+      end
     end
 
-    it "cascades delete field_values when associated field_definition is destroyed" do
-        project = create(:project)
-        field_definition = create(:field_definition, project: project, field_type: "string")
-        field_value = create(:field_value, project: project, field_definition: field_definition)
+    context "boolean fields" do
+      let(:field_definition) { create(:field_definition, field_type: "boolean") }
 
-        expect(FieldValue.exists?(field_value.id)).to be true
+      it "is valid with a true value" do
+        field_value.value = "true"
+        expect(field_value).to be_valid
+      end
 
-        field_definition.destroy
+      it "is valid with a false value" do
+        field_value.value = "false"
+        expect(field_value).to be_valid
+      end
 
-        expect(FieldValue.exists?(field_value.id)).to be false
+      it "is invalid with a non-boolean value" do
+        field_value.value = "something else"
+        expect(field_value).to be_invalid
+        expect(field_value.errors[:value]).to include("must be true or false. Instead got something else")
+      end
     end
+
+    context "string fields" do
+      let(:field_definition) { create(:field_definition, field_type: "string") }
+
+      it "is valid with any string value" do
+        field_value.value = "Any string"
+        expect(field_value).to be_valid
+      end
+
+      it "is valid with a blank value if not required" do
+        field_definition.required = false # Explicitly set to not required for this test
+        field_value.value = ""
+        expect(field_value).to be_valid
+      end
+
+      it "is invalid with a blank value if required" do
+        field_definition.required = true
+        field_value.value = ""
+        expect(field_value).to be_invalid
+      end
+    end
+  end
+
+  describe "value casting" do
+    # Shared examples for casting tests to reduce duplication
+    shared_examples "casts value to type" do |type, valid_value, expected_value, invalid_value, error_message|
+      context "when field type is #{type}" do
+        let!(:field_definition) { create(:field_definition, field_type: type) }
+        let!(:field) { create(:field, field_definition: field_definition) } # Rebuild the field association
+        let(:field_value) { create(:field_value, field: field) }
+
+        it "casts valid value to #{type}" do
+          field_value.value = valid_value
+          expect(field_value.save!).to be true # Ensure save succeeds!  This is the crucial addition.
+          expect(field_value.value).to eq(expected_value)
+          expect(field_value.value.class).to eq(expected_value.class) unless expected_value.nil?
+        end
+
+        it "casts blank value to nil" do
+          field_value.value = ""
+          field_value.save!
+          expect(field_value.value).to be_nil
+        end
+      end
+    end
+
+    include_examples "casts value to type", "integer", "123", 123, "abc", "must be an integer"
+    include_examples "casts value to type", "date", "2024-03-15", Date.new(2024, 3, 15), "invalid date", "must be a valid date"
+    include_examples "casts value to type", "boolean", "true", true, "something else", "must be true or false"
+    include_examples "casts value to type", "string", "test string", "test string", "", nil # String doesn't cast, nil for blank
   end
 end
