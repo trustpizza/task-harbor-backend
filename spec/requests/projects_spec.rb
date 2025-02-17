@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'debug'
 
 RSpec.describe Api::V1::ProjectsController, type: :request do
   let(:valid_attributes) {
@@ -11,6 +12,7 @@ RSpec.describe Api::V1::ProjectsController, type: :request do
 
   describe 'GET /api/v1/projects' do
     it 'returns a list of projects' do
+      debugger
       Project.create! valid_attributes[:project]
       get '/api/v1/projects'
       expect(response).to have_http_status(200)
