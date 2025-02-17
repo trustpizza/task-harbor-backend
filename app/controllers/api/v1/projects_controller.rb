@@ -9,7 +9,7 @@ class Api::V1::ProjectsController < ApplicationController
 
   # GET /api/v1/projects/:id
   def show
-    render json: @project, include: [:field_definitions, :field_values] # Include definitions if needed
+    render json: @project, include: [:field_definitions, :field_values, :fields] # Include definitions if needed
   end
 
   # POST /api/v1/projects
