@@ -10,7 +10,7 @@ class Api::V1::FieldsController < ApplicationController
 
   # GET /projects/:project_id/fields/:id
   def show
-    render json: @field
+    render json: @field, include: [:field_values, :field_definition]
   end
 
   # POST /projects/:project_id/fields

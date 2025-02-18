@@ -4,7 +4,7 @@ require 'debug'
 
 RSpec.describe Api::V1::FieldsController, type: :request do
   let(:project) { create(:project) } # Using FactoryBot for project creation
-  let(:field_definition) { create(:field_definition) } # Using FactoryBot for field definition creation
+  let(:field_definition) { create(:field_definition, field_type: "string", required: false) } # Using FactoryBot for field definition creation
   let(:valid_attributes) {
     { field: { field_definition_id: field_definition.id } }
   }
