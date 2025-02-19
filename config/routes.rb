@@ -13,7 +13,6 @@ Rails.application.routes.draw do
         resources :fields
         resources :field_values
       end
-
       resources :field_definitions
     end
   end
