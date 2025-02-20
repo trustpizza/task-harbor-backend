@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::V1::FieldValuesController, type: :request do
   let!(:project) { create(:project) }
   let!(:field_definition) { create(:field_definition, required: true, field_type: "string") }
-  let!(:field) { create(:field, project: project, field_definition: field_definition) }
+  let!(:field) { create(:field, fieldable: project, field_definition: field_definition) }
   let!(:field_value) { create(:field_value, field: field) }
 
   describe 'GET /api/v1/projects/:project_id/field_values' do
@@ -89,7 +89,7 @@ RSpec.describe Api::V1::FieldValuesController, type: :request do
       end
 
       it 'returns 422 if the field value does not belong to the field' do
-        other_field = create(:field, project: project, field_definition: field_definition)
+        other_field = create(:field, fieldable: project, field_definition: field_definition)
         patch "/api/v1/projects/#{project.id}/field_values/#{field_value.id}", params: { value: 'updated value', field_id: other_field.id }
         expect(response).to have_http_status(:unprocessable_entity)
       end

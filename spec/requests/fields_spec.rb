@@ -14,7 +14,7 @@ RSpec.describe Api::V1::FieldsController, type: :request do
 
   describe 'GET /api/v1/projects/:project_id/fields' do
     it 'returns a list of fields for a project' do
-      create(:field, project: project, field_definition: field_definition)
+      create(:field, fieldable: project, field_definition: field_definition)
       get "/api/v1/projects/#{project.id}/fields"
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body).size).to eq(1)
@@ -23,7 +23,7 @@ RSpec.describe Api::V1::FieldsController, type: :request do
 
   describe 'GET /api/v1/projects/:project_id/fields/:id' do
     it 'returns a single field' do
-      field = create(:field, project: project, field_definition: field_definition)
+      field = create(:field, fieldable: project, field_definition: field_definition)
       get "/api/v1/projects/#{project.id}/fields/#{field.id}"
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)['field_definition_id']).to eq(field_definition.id)
@@ -74,7 +74,7 @@ RSpec.describe Api::V1::FieldsController, type: :request do
 
     context 'with valid parameters' do
       it 'updates the requested field' do
-        field = create(:field, project: project, field_definition: field_definition)
+        field = create(:field, fieldable: project, field_definition: field_definition)
         patch "/api/v1/projects/#{project.id}/fields/#{field.id}", params: new_attributes
         field.reload
         expect(field.field_definition_id).to eq(new_field_definition.id)
@@ -82,7 +82,7 @@ RSpec.describe Api::V1::FieldsController, type: :request do
       end
 
       it 'renders a JSON response with the field' do
-        field = create(:field, project: project, field_definition: field_definition)
+        field = create(:field, fieldable: project, field_definition: field_definition)
         patch "/api/v1/projects/#{project.id}/fields/#{field.id}", params: new_attributes
         expect(response).to have_http_status(200)
         expect(JSON.parse(response.body)['field_definition_id']).to eq(new_field_definition.id)
@@ -91,7 +91,7 @@ RSpec.describe Api::V1::FieldsController, type: :request do
 
     context 'with invalid parameters' do
       it 'renders a JSON response with errors for the field' do
-        field = create(:field, project: project, field_definition: field_definition)
+        field = create(:field, fieldable: project, field_definition: field_definition)
         patch "/api/v1/projects/#{project.id}/fields/#{field.id}", params: invalid_attributes
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)).to be_present
@@ -101,7 +101,7 @@ RSpec.describe Api::V1::FieldsController, type: :request do
 
   describe 'DELETE /api/v1/projects/:project_id/fields/:id' do
     it 'destroys the requested field' do
-      field = create(:field, project: project, field_definition: field_definition)
+      field = create(:field, fieldable: project, field_definition: field_definition)
       expect {
         delete "/api/v1/projects/#{project.id}/fields/#{field.id}"
       }.to change(project.fields, :count).by(-1)

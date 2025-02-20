@@ -36,22 +36,21 @@ RSpec.describe Project, type: :model do
     it 'has many fields' do
       project = create(:project)
       field_def = create(:field_definition)
-      create(:field, project: project, field_definition: field_def) # Create a Field, not FieldDefinition directly
+      create(:field, fieldable: project, field_definition: field_def) # Create a Field, not FieldDefinition directly
       expect(project.fields.count).to eq(1)
     end
 
     it 'has many field_definitions through fields' do
       project = create(:project)
-      # debugger
       field_def = create(:field_definition)
-      field = create(:field, project: project, field_definition: field_def)
+      field = create(:field, fieldable: project, field_definition: field_def)
       expect(project.field_definitions).to include(field.field_definition)
     end
 
     it 'has many field_values through fields' do
       project = create(:project)
       field_def = create(:field_definition)
-      field = create(:field, project: project, field_definition: field_def)
+      field = create(:field, fieldable: project, field_definition: field_def)
       create(:field_value, field: field)
       expect(project.field_values.count).to eq(1)
     end

@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :field do
-    project
     field_definition
+    association :fieldable, factory: :project
   end
 end

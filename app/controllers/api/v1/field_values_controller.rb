@@ -6,7 +6,6 @@ class Api::V1::FieldValuesController < ApplicationController
 
   # GET /api/v1/projects/:project_id/field_values
   def index
-    # debugger
     render json: @project.field_values
   end
 

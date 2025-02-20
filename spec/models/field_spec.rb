@@ -19,8 +19,9 @@ RSpec.describe Field, type: :model do
 
     it 'belongs to a project' do
       project = create(:project)
-      field = create(:field, project: project)
-      expect(field.project).to eq(project)
+      field = create(:field, fieldable: project)
+      # debugger
+      expect(field.fieldable).to eq(project)
     end
 
   end
@@ -38,9 +39,10 @@ RSpec.describe Field, type: :model do
     end
 
     it 'is not valid without a project' do
-      field = build(:field, project: nil)
+      field = build(:field, fieldable: nil)
       expect(field).to_not be_valid
-      expect(field.errors[:project]).to include("must exist")
+      # debugger
+      expect(field.errors[:fieldable]).to include("must exist")
     end
   end
 end
