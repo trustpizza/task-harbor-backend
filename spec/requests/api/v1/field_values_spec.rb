@@ -26,7 +26,7 @@ RSpec.describe Api::V1::FieldValuesController, type: :request do
     end
   end
 
-  describe 'GET /api/v1/projects/:project_id/field_values/:id' do
+  describe 'GET /api/v1/projects/:project_id/fields/:field_id/field_values/:id' do
     it 'returns a single field value' do
       get "/api/v1/projects/#{project.id}/field_values/#{field_value.id}"
       expect(response).to have_http_status(200)

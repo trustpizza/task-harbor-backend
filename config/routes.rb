@@ -9,11 +9,17 @@ Rails.application.routes.draw do
   # root "posts#index"
   namespace :api do
     namespace :v1 do
-      resources :projects do
-        resources :fields
-        resources :field_values
+      resources :projects, only: [:index, :show, :create, :update, :destroy] do
+        resources :tasks, only: [:index, :show, :create, :update, :destroy] do
+          resources :fields, only: [:index, :show, :create, :update, :destroy]
+          resources :field_values, only: [:index, :create, :update, :destroy]
+        end
+  
+        resources :fields, only: [:index, :show, :create, :update, :destroy]
+        resources :field_values, only: [:index, :show, :create, :update, :destroy]
       end
-      resources :field_definitions
+  
+      resources :field_definitions, only: [:index, :show, :create, :update, :destroy]
     end
   end
 end

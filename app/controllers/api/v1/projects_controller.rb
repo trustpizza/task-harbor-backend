@@ -48,6 +48,10 @@ class Api::V1::ProjectsController < ApplicationController
   end
 
   def project_params
-    params.require(:project).permit(:name, :description, :due_date) # Whitelist parameters
+    params.require(:project).permit(:name, :description, :due_date)
+  end
+
+  def field_params
+    params.require(:field).permit(:field_definition_id, :value, :name) # Permit necessary params
   end
 end
