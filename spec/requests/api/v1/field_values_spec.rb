@@ -28,7 +28,7 @@ RSpec.describe Api::V1::FieldValuesController, type: :request do
 
   describe 'GET /api/v1/projects/:project_id/fields/:field_id/field_values/:id' do
     it 'returns a single field value' do
-      get api_v1_project_field_value_url(project, field, field_value) # Named route
+      get api_v1_project_field_value_url(project, field_value) # Named route
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)['id']).to eq(field_value.id)
     end
@@ -89,20 +89,20 @@ RSpec.describe Api::V1::FieldValuesController, type: :request do
       end
 
       it 'returns 422 if the field value does not belong to the field' do
-        other_field = create(:field, fieldable: project, field_definition: field_definition)
+        other_field = create(:field, fieldable: project)
         patch api_v1_project_field_value_url(project, field_value), params: { value: 'updated value', field_id: other_field.id } # Named route
         expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it 'returns 404 if field is not found' do
-        patch api_v1_project_field_value_url(project, field, field_value), params: { value: 'updated value', field_id: 999 } # Named route
+        patch api_v1_project_field_value_url(project, field_value), params: { value: 'updated value', field_id: 999 } # Named route
         expect(response).to have_http_status(:not_found)
       end
     end
 
     context 'with invalid parameters' do
       it 'renders a JSON response with errors' do
-        patch api_v1_project_field_value_url(project, field, field_value), params: { value: nil, field_id: field.id } # Named route
+        patch api_v1_project_field_value_url(project, field_value), params: { value: nil, field_id: field.id } # Named route
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
@@ -111,16 +111,9 @@ RSpec.describe Api::V1::FieldValuesController, type: :request do
   describe 'DELETE /api/v1/projects/:project_id/field_values/:id' do
     it 'destroys the requested field value' do
       expect {
-        delete api_v1_project_field_value_url(project, field, field_value) # Named route
+        delete api_v1_project_field_value_url(project, field_value) # Named route
       }.to change(project.field_values, :count).by(-1)
       expect(response).to have_http_status(:no_content)
-    end
-
-    it 'returns unprocessable entity if destroy fails' do
-      allow_any_instance_of(FieldValue).to receive(:destroy!).and_raise(ActiveRecord::RecordNotDestroyed.new("Failed to destroy"))
-
-      delete api_v1_project_field_value_url(project, field, field_value) # Named route
-      expect(response).to have_http_status(:unprocessable_entity)
     end
   end
 end

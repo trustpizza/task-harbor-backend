@@ -5,7 +5,7 @@ RSpec.describe Api::V1::FieldsController, type: :request do
   let(:field_definition) { create(:field_definition, field_type: "string", required: false) }
   let(:valid_attributes) { { field: { field_definition_id: field_definition.id } } }
   let(:invalid_attributes) { { field: { field_definition_id: nil } } }
-
+  
   describe 'GET /api/v1/projects/:project_id/fields' do
     it 'returns a list of fields for a project' do
       create(:field, fieldable: project, field_definition: field_definition)

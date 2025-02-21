@@ -10,10 +10,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :projects, only: [:index, :show, :create, :update, :destroy] do
-        resources :tasks, only: [:index, :show, :create, :update, :destroy] do
-          resources :fields, only: [:index, :show, :create, :update, :destroy]
-          resources :field_values, only: [:index, :create, :update, :destroy]
-        end
+        resources :tasks, only: [:index, :show, :create, :update, :destroy]
   
         resources :fields, only: [:index, :show, :create, :update, :destroy]
         resources :field_values, only: [:index, :show, :create, :update, :destroy]
