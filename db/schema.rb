@@ -10,9 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_19_204914) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_25_234810) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "addresses", force: :cascade do |t|
+    t.string "addressable_type", null: false
+    t.bigint "addressable_id", null: false
+    t.string "address_line_1"
+    t.string "address_line_2"
+    t.string "city"
+    t.string "state"
+    t.string "zip"
+    t.string "country"
+    t.float "latitude"
+    t.float "longitude"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable"
+  end
 
   create_table "field_definitions", force: :cascade do |t|
     t.string "name"
@@ -39,6 +55,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_19_204914) do
     t.bigint "fieldable_id"
     t.index ["field_definition_id"], name: "index_fields_on_field_definition_id"
     t.index ["fieldable_type", "fieldable_id"], name: "index_fields_on_fieldable"
+  end
+
+  create_table "organizations", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "projects", force: :cascade do |t|
