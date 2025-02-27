@@ -59,9 +59,9 @@ RSpec.describe Project, type: :model do
   describe 'scopes' do
     describe 'upcoming' do
       it 'returns projects with due dates in the future' do
-        create(:project, due_date: Date.tomorrow)
+        create(:project, due_date: Time.zone.tomorrow)
         overdue_project = build(:project) # Use build to create in memory
-        overdue_project.assign_attributes(due_date: Date.yesterday) # Overwrite due_date
+        overdue_project.assign_attributes(due_date: Time.zone.yesterday) # Overwrite due_date
         overdue_project.save(validate: false)
         expect(Project.upcoming.count).to eq(1)
       end
@@ -69,10 +69,10 @@ RSpec.describe Project, type: :model do
 
     describe 'overdue' do
       it 'returns projects with due dates in the past' do
-        create(:project, due_date: Date.tomorrow)
+        create(:project, due_date: Time.zone.tomorrow)
         create(:project, due_date: Time.zone.today)
         overdue_project = build(:project) # Use build to create in memory
-        overdue_project.assign_attributes(due_date: Date.yesterday) # Overwrite due_date
+        overdue_project.assign_attributes(due_date: Time.zone.yesterday) # Overwrite due_date
         overdue_project.save(validate: false)
         expect(Project.overdue.count).to eq(1)
         expect(Project.overdue).to include(overdue_project)
