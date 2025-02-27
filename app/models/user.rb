@@ -4,6 +4,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  # Associations
+  has_many :managed_projects, as: :project_manager, class_name: 'Project'
   belongs_to :organization
 
   validates :first_name, presence: true, length: {minimum:1, maximum:255}

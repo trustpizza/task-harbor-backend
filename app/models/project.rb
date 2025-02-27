@@ -1,5 +1,6 @@
 class Project < ApplicationRecord
   # Associations
+  belongs_to :organization
   has_many :fields, as: :fieldable, dependent: :destroy
   has_many :field_definitions, through: :fields
   has_many :field_values, through: :fields
