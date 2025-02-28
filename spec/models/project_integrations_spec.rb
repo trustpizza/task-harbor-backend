@@ -2,9 +2,12 @@ require 'rails_helper'
 require 'debug'
 
 RSpec.describe Project, type: :model do
+  let(:org) { create(:organization) }
+  let(:pm) { create(:user, organization: org) }
+
   describe 'validations' do
     it 'is valid with valid attributes' do
-      project = build(:project)
+      project = build(:project) # Factory will create with org and project_manager
       expect(project).to be_valid
     end
 
@@ -30,25 +33,47 @@ RSpec.describe Project, type: :model do
       expect(project).to_not be_valid
       expect(project.errors[:due_date]).to include("must be greater than or equal to #{Time.zone.today}")
     end
+
+    it 'is not valid without an organization' do
+      project = build(:project, organization: nil)
+      expect(project).to_not be_valid
+      expect(project.errors[:organization]).to include("must exist")
+    end
+
+    it 'is not valid without a project_manager' do
+      project = build(:project, project_manager: nil)
+      expect(project).to_not be_valid
+      expect(project.errors[:project_manager]).to include("must exist")
+    end
   end
 
   describe 'associations' do
+    it 'belongs to an organization' do
+      association = described_class.reflect_on_association(:organization)
+      expect(association.macro).to eq(:belongs_to)
+    end
+
+    it 'belongs to a project_manager (user)' do
+      association = described_class.reflect_on_association(:project_manager)
+      expect(association.macro).to eq(:belongs_to)
+    end
+
     it 'has many fields' do
-      project = create(:project)
+      project = create(:project, organization: org, project_manager: pm)
       field_def = create(:field_definition)
-      create(:field, fieldable: project, field_definition: field_def) # Create a Field, not FieldDefinition directly
+      create(:field, fieldable: project, field_definition: field_def)
       expect(project.fields.count).to eq(1)
     end
 
     it 'has many field_definitions through fields' do
-      project = create(:project)
+      project = create(:project, organization: org, project_manager: pm)
       field_def = create(:field_definition)
       field = create(:field, fieldable: project, field_definition: field_def)
       expect(project.field_definitions).to include(field.field_definition)
     end
 
     it 'has many field_values through fields' do
-      project = create(:project)
+      project = create(:project, organization: org, project_manager: pm)
       field_def = create(:field_definition)
       field = create(:field, fieldable: project, field_definition: field_def)
       create(:field_value, field: field)
@@ -59,9 +84,9 @@ RSpec.describe Project, type: :model do
   describe 'scopes' do
     describe 'upcoming' do
       it 'returns projects with due dates in the future' do
-        create(:project, due_date: Time.zone.tomorrow)
-        overdue_project = build(:project) # Use build to create in memory
-        overdue_project.assign_attributes(due_date: Time.zone.yesterday) # Overwrite due_date
+        create(:project, organization: org, project_manager: pm, due_date: Time.zone.tomorrow)
+        overdue_project = build(:project, organization: org, project_manager: pm)
+        overdue_project.assign_attributes(due_date: Time.zone.yesterday)
         overdue_project.save(validate: false)
         expect(Project.upcoming.count).to eq(1)
       end
@@ -69,10 +94,10 @@ RSpec.describe Project, type: :model do
 
     describe 'overdue' do
       it 'returns projects with due dates in the past' do
-        create(:project, due_date: Time.zone.tomorrow)
-        create(:project, due_date: Time.zone.today)
-        overdue_project = build(:project) # Use build to create in memory
-        overdue_project.assign_attributes(due_date: Time.zone.yesterday) # Overwrite due_date
+        create(:project, organization: org, project_manager: pm, due_date: Time.zone.tomorrow)
+        create(:project, organization: org, project_manager: pm, due_date: Time.zone.today)
+        overdue_project = build(:project, organization: org, project_manager: pm)
+        overdue_project.assign_attributes(due_date: Time.zone.yesterday)
         overdue_project.save(validate: false)
         expect(Project.overdue.count).to eq(1)
         expect(Project.overdue).to include(overdue_project)

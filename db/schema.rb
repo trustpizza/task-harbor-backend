@@ -70,10 +70,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_27_181547) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "organization_id", null: false
-    t.string "project_manager_type", null: false
     t.bigint "project_manager_id", null: false
     t.index ["organization_id"], name: "index_projects_on_organization_id"
-    t.index ["project_manager_type", "project_manager_id"], name: "index_projects_on_project_manager"
+    t.index ["project_manager_id"], name: "index_projects_on_project_manager_id"
   end
 
   create_table "tasks", force: :cascade do |t|
@@ -105,5 +104,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_27_181547) do
   add_foreign_key "field_values", "fields"
   add_foreign_key "fields", "field_definitions"
   add_foreign_key "projects", "organizations"
+  add_foreign_key "projects", "users", column: "project_manager_id"
   add_foreign_key "tasks", "projects"
 end

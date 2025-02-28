@@ -1,7 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Task, type: :model do
-  let(:project) { create(:project) }
+  let(:org) { create(:organization) }
+  let(:pm) { create(:user, organization: org) }
+  let(:project) { create(:project, project_manager: pm, organization: org) }
   describe 'validations' do
     it 'is valid with valid attributes' do
       task = build(:task, project: project, project: project)

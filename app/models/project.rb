@@ -1,6 +1,8 @@
 class Project < ApplicationRecord
   # Associations
   belongs_to :organization
+  belongs_to :project_manager, class_name: 'User', foreign_key: 'project_manager_id'
+  #Ex:- :null => false
   has_many :fields, as: :fieldable, dependent: :destroy
   has_many :field_definitions, through: :fields
   has_many :field_values, through: :fields
