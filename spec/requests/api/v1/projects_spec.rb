@@ -1,12 +1,29 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::ProjectsController, type: :request do
+  let!(:organization) { create(:organization) }
+  let!(:user) { create(:user) }
+
   let(:valid_attributes) {
-    { project: { name: 'Test Project', description: 'Test Description', due_date: 1.week.from_now } }
+    { project: {
+        name: 'Test Project',
+        description: 'Test Description',
+        due_date: 1.week.from_now,
+        organization_id: organization.id, # Use organization.id
+        project_manager_id: user.id # Use user.id
+      }
+    }
   }
 
   let(:invalid_attributes) {
-    { project: { name: nil, description: nil, due_date: nil } }
+    { project: {
+        name: nil,
+        description: nil,
+        due_date: nil,
+        organization_id: organization.id, # Use organization.id
+        project_manager_id: user.id # Use user.id
+      }
+    }
   }
 
   describe 'GET /api/v1/projects' do
@@ -36,6 +53,7 @@ RSpec.describe Api::V1::ProjectsController, type: :request do
   describe 'POST /api/v1/projects' do
     context 'with valid parameters' do
       it 'creates a new project' do
+        debugger
         expect {
           post api_v1_projects_url, params: valid_attributes # Named route
         }.to change(Project, :count).by(1)
@@ -44,6 +62,7 @@ RSpec.describe Api::V1::ProjectsController, type: :request do
       end
 
       it 'renders a JSON response with the new project' do
+        debugger
         post api_v1_projects_url, params: valid_attributes # Named route
         expect(JSON.parse(response.body)['name']).to eq('Test Project')
       end

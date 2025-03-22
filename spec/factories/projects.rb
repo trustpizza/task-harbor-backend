@@ -3,7 +3,7 @@ FactoryBot.define do
     name { Faker::Lorem.sentence }
     description { Faker::Lorem.paragraph }
     due_date { Time.zone.tomorrow }
-    organization { association :organization } # Assuming you have an organization factory
-    project_manager { association :user } # Assuming you have a user factory
+    organization { association(:organization) }
+    project_manager { association(:user) }
   end
 end
