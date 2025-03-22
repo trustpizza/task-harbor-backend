@@ -57,5 +57,9 @@ end
 gem "geocoder", "~> 1.8"
 
 gem "devise", "~> 4.9"
+gem 'jsonapi-serializer'
+
 
 gem "pundit", "~> 2.4"
+
+gem "devise-jwt", "~> 0.12.1"
