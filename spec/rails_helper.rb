@@ -11,6 +11,8 @@ require 'rspec/rails'
 require 'faker'
 require 'factory_bot_rails'
 require 'database_cleaner'
+require 'devise/jwt/test_helpers'
+
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -42,11 +44,22 @@ RSpec.configure do |config|
     Rails.root.join('spec/fixtures')
   ]
 
+  # Use for devise jwt testing
+  config.include Devise::Test::IntegrationHelpers, type: :request
+  config.include Devise::JWT::TestHelpers, type: :request
+
+  def auth_header(user)
+    headers = { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }
+    Devise::JWT::TestHelpers.auth_headers(headers, user)
+  end
+  
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = true
 
+
+  
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
 

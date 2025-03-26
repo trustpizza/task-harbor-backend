@@ -1,4 +1,4 @@
-class Api::V1::FieldDefinitionsController < ApplicationController
+class Api::V1::FieldDefinitionsController < Api::V1::BaseController
   before_action :set_field_definition, only: [:show, :update, :destroy]
 
   # GET /api/v1/field_definitions

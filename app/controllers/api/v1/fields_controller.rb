@@ -1,4 +1,4 @@
-class Api::V1::FieldsController < ApplicationController
+class Api::V1::FieldsController < Api::V1::BaseController
   before_action :set_project
   before_action :set_field, only: [:show, :update, :destroy]
 

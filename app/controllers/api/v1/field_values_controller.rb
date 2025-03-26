@@ -1,6 +1,6 @@
 require 'debug'
 
-class Api::V1::FieldValuesController < ApplicationController
+class Api::V1::FieldValuesController < Api::V1::BaseController
   before_action :set_project
   before_action :set_field_value, only: [:show, :update, :destroy]
 

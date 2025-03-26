@@ -1,4 +1,4 @@
-class Api::V1::ProjectsController < ApplicationController
+class Api::V1::ProjectsController < Api::V1::BaseController
   before_action :set_project, only: [:show, :update, :destroy]
 
   # GET /api/v1/projects
@@ -41,6 +41,7 @@ class Api::V1::ProjectsController < ApplicationController
 
   private
 
+
   def set_project
     @project = Project.find(params[:id])
   rescue ActiveRecord::RecordNotFound
@@ -48,10 +49,20 @@ class Api::V1::ProjectsController < ApplicationController
   end
 
   def project_params
-    params.require(:project).permit(:name, :description, :due_date)
+    params.require(:project).permit(
+      :name,
+      :description,
+      :due_date,
+      :creation_date,
+      :project_manager_id,
+      fields: [:id, :type],
+      field_definitions: [:id, :type],
+      field_values: [:id, :type],
+      tasks: [:id, :type]
+    )
   end
 
   def field_params
-    params.require(:field).permit(:field_definition_id, :value, :name) # Permit necessary params
+    params.require(:field).permit(:field_definition_id, :value, :name)
   end
 end
