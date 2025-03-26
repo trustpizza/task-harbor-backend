@@ -8,7 +8,7 @@ RSpec.describe Api::V1::ProjectsController, type: :request do
     { project: {
         name: 'Test Project',
         description: 'Test Description',
-        due_date: "2025-09-25",
+        due_date: Time.zone.tomorrow,
         project_manager_id: user.id.to_s
       }
     }

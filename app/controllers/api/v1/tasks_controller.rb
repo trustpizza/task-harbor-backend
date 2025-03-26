@@ -5,19 +5,19 @@ class Api::V1::TasksController < Api::V1::BaseController
   # GET /api/v1/projects/:project_id/tasks
   def index
     @tasks = @project.tasks
-    render json: @tasks
+    render json: TaskSerializer.new(@tasks).serializable_hash
   end
 
   # GET /api/v1/projects/:project_id/tasks/:id
   def show
-    render json: @task, include: [:fields, :field_values]
+    render json: TaskSerializer.new(@task, include: [:fields, :field_values]).serializable_hash
   end
 
   # POST /api/v1/projects/:project_id/tasks
   def create
     @task = @project.tasks.new(task_params)
     if @task.save
-      render json: @task, status: :created, location: [:api, :v1, @project, @task]
+      render json: TaskSerializer.new(@task).serializable_hash, status: :created, location: [:api, :v1, @project, @task]
     else
       render json: { errors: @task.errors.full_messages }, status: :unprocessable_entity
     end
@@ -26,7 +26,7 @@ class Api::V1::TasksController < Api::V1::BaseController
   # PATCH/PUT /api/v1/projects/:project_id/tasks/:id
   def update
     if @task.update(task_params)
-      render json: @task
+      render json: TaskSerializer.new(@task).serializable_hash
     else
       render json: { errors: @task.errors.full_messages }, status: :unprocessable_entity
     end
