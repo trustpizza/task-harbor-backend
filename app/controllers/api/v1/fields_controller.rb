@@ -5,12 +5,12 @@ class Api::V1::FieldsController < Api::V1::BaseController
   # GET /projects/:project_id/fields
   def index
     @fields = @project.fields
-    render json: @fields
+    render json: FieldSerializer.new(@fields).serializable_hash
   end
 
   # GET /projects/:project_id/fields/:id
   def show
-    render json: @field, include: [:field_values, :field_definition]
+    render json: FieldSerializer.new(@field, include: [:field_values, :field_definition]).serializable_hash
   end
 
   # POST /projects/:project_id/fields
@@ -18,18 +18,18 @@ class Api::V1::FieldsController < Api::V1::BaseController
     @field = @project.fields.build(field_params)
 
     if @field.save
-      render json: @field, status: :created, location: [:api, :v1, @project, @field]
+      render json: FieldSerializer.new(@field).serializable_hash, status: :created, location: [:api, :v1, @project, @field]
     else
-      render json: @field.errors, status: :unprocessable_entity
+      render json: { errors: @field.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /projects/:project_id/fields/:id
   def update
     if @field.update(field_params)
-      render json: @field
+      render json: FieldSerializer.new(@field).serializable_hash
     else
-      render json: @field.errors, status: :unprocessable_entity
+      render json: { errors: @field.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
