@@ -1,22 +1,23 @@
 class Api::V1::ProjectsController < Api::V1::BaseController
   before_action :set_project, only: [:show, :update, :destroy]
+  before_action :set_organization
 
   # GET /api/v1/projects
   def index
-    @projects = Project.all
-    render json: @projects # No need to explicitly call to_json; Rails does it automatically
+    @projects = @organization.projects
+    render json: ProjectSerializer.new(@projects).serializable_hash
   end
 
   # GET /api/v1/projects/:id
   def show
-    render json: @project, include: [:field_definitions, :field_values, :fields] # Include definitions if needed
+    render json: ProjectSerializer.new(@project, include: [:field_definitions, :field_values, :fields]).serializable_hash
   end
 
   # POST /api/v1/projects
   def create
-    @project = Project.new(project_params)
+    @project = @organization.projects.new(project_params)
     if @project.save
-      render json: @project, status: :created, location: [:api, :v1, @project]#api_v1_project_url(@project)
+      render json: ProjectSerializer.new(@project).serializable_hash, status: :created, location: [:api, :v1, @project]
     else
       render json: { errors: @project.errors.full_messages }, status: :unprocessable_entity
     end
@@ -25,7 +26,7 @@ class Api::V1::ProjectsController < Api::V1::BaseController
   # PATCH/PUT /api/v1/projects/:id
   def update
     if @project.update(project_params)
-      render json: @project # Successful update; render the updated object
+      render json: ProjectSerializer.new(@project).serializable_hash
     else
       render json: { errors: @project.errors.full_messages }, status: :unprocessable_entity
     end
@@ -33,14 +34,17 @@ class Api::V1::ProjectsController < Api::V1::BaseController
 
   # DELETE /api/v1/projects/:id
   def destroy
-    @project.destroy! # Use destroy! to raise an exception if deletion fails
-    head :no_content # 204 No Content is the correct response for successful delete
-  rescue ActiveRecord::RecordNotDestroyed => e # Catch specific destroy errors
-      render json: { error: e.message }, status: :unprocessable_entity
+    @project.destroy!
+    head :no_content
+  rescue ActiveRecord::RecordNotDestroyed => e
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   private
 
+  def set_organization
+    @organization = current_user.organization
+  end
 
   def set_project
     @project = Project.find(params[:id])
@@ -53,7 +57,7 @@ class Api::V1::ProjectsController < Api::V1::BaseController
       :name,
       :description,
       :due_date,
-      :creation_date,
+      :organization_id,
       :project_manager_id,
       fields: [:id, :type],
       field_definitions: [:id, :type],

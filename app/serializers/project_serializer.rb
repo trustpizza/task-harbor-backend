@@ -1,7 +1,7 @@
 class ProjectSerializer
   include JSONAPI::Serializer
 
-  attributes :name, :description, :due_date, :creation_date, :organization_id, :project_manager_id
+  attributes :name, :description, :due_date, :project_manager_id
 
   has_many :fields, record_type: :fields
   has_many :field_definitions, record_type: :field_definitions

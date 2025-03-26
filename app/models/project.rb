@@ -17,7 +17,4 @@ class Project < ApplicationRecord
   scope :upcoming, -> { where("due_date >= ?", Time.zone.today) }
   scope :overdue, -> { where("due_date < ?", Time.zone.today) }
 
-  def set_creation_date
-    self.creation_date = Time.zone.today
-  end
 end
