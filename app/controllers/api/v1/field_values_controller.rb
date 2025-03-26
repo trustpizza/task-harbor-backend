@@ -1,17 +1,15 @@
-require 'debug'
-
 class Api::V1::FieldValuesController < Api::V1::BaseController
   before_action :set_project
   before_action :set_field_value, only: [:show, :update, :destroy]
 
   # GET /api/v1/projects/:project_id/field_values
   def index
-    render json: @project.field_values
+    render json: FieldValueSerializer.new(@project.field_values).serializable_hash
   end
 
   # GET /api/v1/projects/:project_id/field_values/:id
   def show
-    render json: @field_value
+    render json: FieldValueSerializer.new(@field_value).serializable_hash
   end
 
   # POST /api/v1/projects/:project_id/field_values
@@ -25,7 +23,7 @@ class Api::V1::FieldValuesController < Api::V1::BaseController
     field_value = field.field_values.build(field_value_params)
 
     if field_value.save
-      render json: field_value, status: :created
+      render json: FieldValueSerializer.new(field_value).serializable_hash, status: :created
     else
       render json: { errors: field_value.errors.full_messages }, status: :unprocessable_entity
     end
@@ -46,7 +44,7 @@ class Api::V1::FieldValuesController < Api::V1::BaseController
     end
 
     if @field_value.update(field_value_params)
-      render json: @field_value
+      render json: FieldValueSerializer.new(@field_value).serializable_hash
     else
       render json: { errors: @field_value.errors.full_messages }, status: :unprocessable_entity
     end
