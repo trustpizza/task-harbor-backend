@@ -4,19 +4,19 @@ class Api::V1::FieldDefinitionsController < Api::V1::BaseController
   # GET /api/v1/field_definitions
   def index
     @field_definitions = FieldDefinition.all
-    render json: @field_definitions
+    render json: FieldDefinitionSerializer.new(@field_definitions).serializable_hash
   end
 
   # GET /api/v1/field_definitions/:id
   def show
-    render json: @field_definition
+    render json: FieldDefinitionSerializer.new(@field_definition).serializable_hash
   end
 
   # POST /api/v1/field_definitions
   def create
     @field_definition = FieldDefinition.new(field_definition_params)
     if @field_definition.save
-      render json: @field_definition, status: :created, location: [:api, :v1, @field_definition]
+      render json: FieldDefinitionSerializer.new(@field_definition).serializable_hash, status: :created, location: [:api, :v1, @field_definition]
     else
       render json: { errors: @field_definition.errors.full_messages }, status: :unprocessable_entity
     end
@@ -25,7 +25,7 @@ class Api::V1::FieldDefinitionsController < Api::V1::BaseController
   # PATCH/PUT /api/v1/field_definitions/:id
   def update
     if @field_definition.update(field_definition_params)
-      render json: @field_definition
+      render json: FieldDefinitionSerializer.new(@field_definition).serializable_hash
     else
       render json: { errors: @field_definition.errors.full_messages }, status: :unprocessable_entity
     end
