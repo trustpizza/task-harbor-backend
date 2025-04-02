@@ -18,6 +18,8 @@ Rails.application.routes.draw do
   # root "posts#index"
   namespace :api do
     namespace :v1 do
+      get "users/me", to: "users#me"
+
       resources :projects, only: [:index, :show, :create, :update, :destroy] do
         resources :tasks, only: [:index, :show, :create, :update, :destroy]
   
