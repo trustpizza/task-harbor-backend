@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_02_163831) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_02_163816) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -103,16 +103,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_02_163831) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  create_table "workflow_tasks", force: :cascade do |t|
-    t.bigint "workflow_id", null: false
-    t.bigint "task_id", null: false
-    t.integer "position"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["task_id"], name: "index_workflow_tasks_on_task_id"
-    t.index ["workflow_id"], name: "index_workflow_tasks_on_workflow_id"
-  end
-
   create_table "workflows", force: :cascade do |t|
     t.bigint "project_id", null: false
     t.string "name"
@@ -127,7 +117,5 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_02_163831) do
   add_foreign_key "projects", "organizations"
   add_foreign_key "projects", "users", column: "project_manager_id"
   add_foreign_key "tasks", "projects"
-  add_foreign_key "workflow_tasks", "tasks"
-  add_foreign_key "workflow_tasks", "workflows"
   add_foreign_key "workflows", "projects"
 end

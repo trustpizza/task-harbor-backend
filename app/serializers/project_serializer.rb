@@ -7,4 +7,5 @@ class ProjectSerializer
   has_many :field_definitions, record_type: :field_definitions
   has_many :field_values, record_type: :field_values
   has_many :tasks, record_type: :tasks
+  has_many :workflows, record_type: :workflows
 end

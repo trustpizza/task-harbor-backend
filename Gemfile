@@ -15,6 +15,8 @@ gem "puma", ">= 5.0"
 # Cors
 gem 'rack-cors'
 
+# List
+gem 'acts_as_list'
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 
