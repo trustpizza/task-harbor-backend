@@ -15,7 +15,7 @@ class FieldValue < ApplicationRecord
     when "date"
       Date.parse(val) rescue nil if val.present?
     when "boolean"
-      val.downcase == 'true' if val.present?
+      val.downcase == 'true' || val.downcase == 't' if val.present?
     else  # String and unsupported types
       val
     end

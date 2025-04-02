@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_02_163816) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_02_201348) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -75,6 +75,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_02_163816) do
     t.index ["project_manager_id"], name: "index_projects_on_project_manager_id"
   end
 
+  create_table "task_workflows", force: :cascade do |t|
+    t.bigint "task_id", null: false
+    t.bigint "workflow_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["task_id"], name: "index_task_workflows_on_task_id"
+    t.index ["workflow_id"], name: "index_task_workflows_on_workflow_id"
+  end
+
   create_table "tasks", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -116,6 +125,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_02_163816) do
   add_foreign_key "fields", "field_definitions"
   add_foreign_key "projects", "organizations"
   add_foreign_key "projects", "users", column: "project_manager_id"
+  add_foreign_key "task_workflows", "tasks"
+  add_foreign_key "task_workflows", "workflows"
   add_foreign_key "tasks", "projects"
   add_foreign_key "workflows", "projects"
 end

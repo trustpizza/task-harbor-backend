@@ -4,7 +4,7 @@ class FieldSerializer
 
   attributes :fieldable_type, :fieldable_id # Include these for polymorphic association
 
-  belongs_to :field_definition
+  belongs_to :field_definition, serializer: FieldDefinitionSerializer
   belongs_to :fieldable, polymorphic: true
-  has_many :field_values
+  has_many :field_values, serializer: FieldValueSerializer
 end

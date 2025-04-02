@@ -5,7 +5,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
          :jwt_authenticatable, jwt_revocation_strategy: self
-  has_secure_password
+  # has_secure_password
   # Associations
   has_many :managed_projects, as: :project_manager, class_name: 'Project'
   belongs_to :organization

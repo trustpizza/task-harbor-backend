@@ -3,43 +3,136 @@
 require 'faker'
 
 # Destroy existing records to ensure idempotency
+puts "Destroying existing data..."
+Workflow.destroy_all
+Task.destroy_all
 Project.destroy_all
 FieldDefinition.destroy_all
 Field.destroy_all
 FieldValue.destroy_all
 
-VALUE_COUNT_CHOICES = (7..12).to_a
+# User.destroy_all
+# Organization.destroy_all
 
+puts "Data destroyed."
 
-def generate_value(val_type)
+# --- Helper Methods ---
+
+def generate_value(val_type, options = nil)
   case val_type
   when "integer"
-    [0..1000].sample
+    min = options.is_a?(Hash) && options["min"] ? options["min"] : 0
+    max = options.is_a?(Hash) && options["max"] ? options["max"] : 1000
+    rand(min..max)
   when "date"
     two_years_ago = 2.years.ago.to_date
     Faker::Date.between(from: two_years_ago, to: Date.today)
   when "boolean"
-    [true, false].sample
+    [true, false].sample.to_s
   when "string"
-    Faker::Name.name
+    Faker::Lorem.word
+  else
+    nil
   end
 end
 
-["string", "integer", "date", "boolean"].each do |field_type|
-  FieldDefinition.create(name: Faker::Name.name, field_type: field_type, required: [true, false].sample)
+puts "Creating Organization..."
+# Create a single Organization
+
+organization = Organization.first_or_create(
+  name: Faker::Company.name
+)
+
+puts "Creating User..."
+user = organization.users.first_or_create!(
+  first_name: "Axel",
+  last_name: "Olsson",
+  email: "test@email.com",
+  password: "123456",
+  password_confirmation: "123456"
+)
+
+
+puts "Creating Field Definitions..."
+# Create Field Definitions
+field_definitions = []
+[
+  # { name: "Priority", field_type: "dropdown", options: ["High", "Medium", "Low"].to_json, required: true },
+  # { name: "Status", field_type: "dropdown", options: ["To Do", "In Progress", "Completed"].to_json, required: true },
+  { name: "Estimated Time (hours)", field_type: "integer", options: { min: 1, max: 100 }.to_json, required: false },
+  { name: "Start Date", field_type: "date", required: true },
+  { name: "Is Blocked", field_type: "boolean", required: false },
+  { name: "Notes", field_type: "string", required: false },
+].each do |field_data|
+  field_definitions << FieldDefinition.create!(field_data)
 end
 
-(3..5).to_a.sample.times do
-# 5.times do
-  project = Project.create(name: Faker::Name.name, description: Faker::Lorem.paragraph, due_date: Faker::Date.forward(days:20))
+puts "Creating Projects..."
+# Create Projects
+5.times do
+  project = Project.create!(
+    name: Faker::App.name,
+    description: Faker::Lorem.paragraph,
+    due_date: Faker::Date.forward(days: 30),
+    organization: organization,
+    project_manager: user
+  )
 
-  FieldDefinition.all.each do |field_def|
-    field = project.fields.create(field_definition: field_def)
+  puts "Creating Workflows for Project: #{project.name}"
+  # Create Workflows
+  workflows = []
+  2.times do
+    workflows << Workflow.create!(
+      project: project,
+      name: Faker::Job.title,
+      description: Faker::Lorem.sentence
+    )
+  end
 
-    VALUE_COUNT_CHOICES.sample.times do 
-      value = generate_value(field_def.field_type)
-      field.field_values.create(value: value)
+  puts "Creating Tasks for Project: #{project.name}"
+  # Create Tasks
+  5.times do
+    task = Task.create!(
+      name: Faker::Job.field,
+      description: Faker::Lorem.paragraph,
+      due_date: Faker::Date.forward(days: 15),
+      project: project
+    )
+
+    # Add task to a random workflow
+    workflow = workflows.sample
+    workflow.tasks << task if workflow
+
+    # Create Fields and FieldValues for each Task
+    field_definitions.each do |field_definition|
+      field = Field.create!(
+        field_definition: field_definition,
+        fieldable: task
+      )
+
+      # Create FieldValues
+      value = generate_value(field_definition.field_type, field_definition.options)
+      FieldValue.create!(
+        field: field,
+        value: value
+      )
     end
   end
 
+  # Create Fields and FieldValues for each Project
+  field_definitions.each do |field_definition|
+    field = Field.create!(
+      field_definition: field_definition,
+      fieldable: project
+    )
+
+    # Create FieldValues
+    value = generate_value(field_definition.field_type, field_definition.options)
+    FieldValue.create!(
+      field: field,
+      value: value
+    )
+  end
 end
+
+puts "Seed data created successfully!"

@@ -4,7 +4,8 @@ class Task < ApplicationRecord
   has_many :fields, as: :fieldable, dependent: :destroy
   has_many :field_definitions, through: :fields
   has_many :field_values, through: :fields
-  has_and_belongs_to_many :workflows
+  has_many :task_workflows, dependent: :destroy
+  has_many :workflows, through: :task_workflows
   # Validations
   validates :name, presence: true
   validates :description, length: { maximum: 5000 }, allow_blank: true
