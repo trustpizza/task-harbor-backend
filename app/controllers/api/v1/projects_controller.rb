@@ -5,12 +5,12 @@ class Api::V1::ProjectsController < Api::V1::BaseController
   # GET /api/v1/projects
   def index
     @projects = @organization.projects
-    render json: ProjectSerializer.new(@projects).serializable_hash
+    render json: ProjectSerializer.new(@projects, include: included_relationships, params: { include: included_relationships }).serializable_hash
   end
 
   # GET /api/v1/projects/:id
   def show
-    render json: ProjectSerializer.new(@project, include: [:field_definitions, :field_values, :fields]).serializable_hash
+    render json: ProjectSerializer.new(@project, include: included_relationships, params: { include: included_relationships }).serializable_hash
   end
 
   # POST /api/v1/projects
@@ -79,5 +79,11 @@ class Api::V1::ProjectsController < Api::V1::BaseController
 
   def field_params
     params.require(:field).permit(:field_definition_id, :value, :name)
+  end
+
+  # DRY method for determining included relationships
+  def included_relationships
+    valid_includes = %w[workflows tasks field_definitions field_values fields]
+    params[:include].to_s.split(",").select { |rel| valid_includes.include?(rel) }
   end
 end
