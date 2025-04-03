@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :workflow do
-    project { nil }
+    project { association :project }
     name { "MyString" }
     description { "MyText" }
   end

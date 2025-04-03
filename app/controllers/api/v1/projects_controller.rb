@@ -1,5 +1,5 @@
 class Api::V1::ProjectsController < Api::V1::BaseController
-  before_action :set_project, only: [:show, :update, :destroy]
+  before_action :set_project, only: [:show, :update, :destroy, :trigger_workflow]
   before_action :set_organization
 
   # GET /api/v1/projects
@@ -38,6 +38,17 @@ class Api::V1::ProjectsController < Api::V1::BaseController
     head :no_content
   rescue ActiveRecord::RecordNotDestroyed => e
     render json: { error: e.message }, status: :unprocessable_entity
+  end
+
+  # POST /api/v1/projects/:id/trigger_workflow
+  def trigger_workflow
+    workflow = Workflow.find(params[:workflow_id])
+    if workflow.should_trigger?(params[:conditions])
+      @project.trigger_workflow(workflow)
+      render json: { message: "Workflow triggered successfully" }, status: :ok
+    else
+      render json: { error: "Workflow conditions not met" }, status: :unprocessable_entity
+    end
   end
 
   private

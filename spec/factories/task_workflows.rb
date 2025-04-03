@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :task_workflow do
-    task { nil }
-    workflow { nil }
+    task { association :task }
+    workflow { association :workflow }
   end
 end

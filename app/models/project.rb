@@ -18,4 +18,16 @@ class Project < ApplicationRecord
   scope :upcoming, -> { where("due_date >= ?", Time.zone.today) }
   scope :overdue, -> { where("due_date < ?", Time.zone.today) }
 
+  # Methods
+  def trigger_workflow(workflow)
+    ActiveRecord::Base.transaction do
+      workflow.tasks.each do |task|
+        self.tasks.create!(
+          name: task.name,
+          description: task.description,
+          due_date: task.due_date
+        )
+      end
+    end
+  end
 end

@@ -21,6 +21,12 @@ Rails.application.routes.draw do
       get "users/me", to: "users#me"
 
       resources :projects, only: [:index, :show, :create, :update, :destroy] do
+        member do
+          post :trigger_workflow
+        end
+
+        resources :workflows, only: [:index, :show, :create, :update, :destroy]
+
         resources :tasks, only: [:index, :show, :create, :update, :destroy]
   
         resources :fields, only: [:index, :show, :create, :update, :destroy]
