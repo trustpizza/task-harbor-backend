@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :workflow do
-    project { association :project }
+    organization { association :organization } # Updated to reference organization
     name { "MyString" }
     description { "MyText" }
   end

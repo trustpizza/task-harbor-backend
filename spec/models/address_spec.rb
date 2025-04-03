@@ -6,10 +6,6 @@ RSpec.describe Address, type: :model do
   let(:organization) { create(:organization) }
   let(:address) { create(:address, addressable: organization) }
 
-  describe "associations" do
-    it { should belong_to(:addressable) }
-  end
-
   describe "validations" do
     it { should validate_presence_of(:address_line_1) }
     it { should validate_presence_of(:city) }

@@ -1,29 +1,29 @@
 class Api::V1::TasksController < Api::V1::BaseController
-  before_action :set_project
+  before_action :set_taskable
   before_action :set_task, only: [:show, :update, :destroy]
 
-  # GET /api/v1/projects/:project_id/tasks
+  # GET /api/v1/:taskable_type/:taskable_id/tasks
   def index
-    @tasks = @project.tasks
+    @tasks = @taskable.tasks
     render json: TaskSerializer.new(@tasks).serializable_hash
   end
 
-  # GET /api/v1/projects/:project_id/tasks/:id
+  # GET /api/v1/:taskable_type/:taskable_id/tasks/:id
   def show
     render json: TaskSerializer.new(@task, include: [:fields, :field_values]).serializable_hash
   end
 
-  # POST /api/v1/projects/:project_id/tasks
+  # POST /api/v1/:taskable_type/:taskable_id/tasks
   def create
-    @task = @project.tasks.new(task_params)
+    @task = @taskable.tasks.new(task_params)
     if @task.save
-      render json: TaskSerializer.new(@task).serializable_hash, status: :created, location: [:api, :v1, @project, @task]
+      render json: TaskSerializer.new(@task).serializable_hash, status: :created, location: [:api, :v1, @taskable, @task]
     else
       render json: { errors: @task.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /api/v1/projects/:project_id/tasks/:id
+  # PATCH/PUT /api/v1/:taskable_type/:taskable_id/tasks/:id
   def update
     if @task.update(task_params)
       render json: TaskSerializer.new(@task).serializable_hash
@@ -32,7 +32,7 @@ class Api::V1::TasksController < Api::V1::BaseController
     end
   end
 
-  # DELETE /api/v1/projects/:project_id/tasks/:id
+  # DELETE /api/v1/:taskable_type/:taskable_id/tasks/:id
   def destroy
     @task.destroy!
     head :no_content
@@ -42,19 +42,23 @@ class Api::V1::TasksController < Api::V1::BaseController
 
   private
 
-  def set_project
-    @project = Project.find(params[:project_id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Project not found" }, status: :not_found
+  def set_taskable
+    if params[:project_id]
+      @taskable = Project.find(params[:project_id])
+    elsif params[:workflow_id]
+      @taskable = Workflow.find(params[:workflow_id])
+    else
+      render json: { error: "Invalid taskable type" }, status: :unprocessable_entity
+    end
   end
 
   def set_task
-    @task = @project.tasks.find(params[:id])
+    @task = @taskable.tasks.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Task not found" }, status: :not_found
   end
 
   def task_params
-    params.require(:task).permit(:name, :description, :status, :due_date)
+    params.require(:task).permit(:name, :description, :due_date, :status)
   end
 end

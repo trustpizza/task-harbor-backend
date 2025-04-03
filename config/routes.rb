@@ -20,14 +20,16 @@ Rails.application.routes.draw do
     namespace :v1 do
       get "users/me", to: "users#me"
 
+      resources :workflows, only: [:index, :show, :create, :update, :destroy] do
+        resources :tasks, only: [:index, :create, :show, :update, :destroy], defaults: { taskable_type: 'Workflow' }
+      end
+
       resources :projects, only: [:index, :show, :create, :update, :destroy] do
         member do
           post :trigger_workflow
         end
 
-        resources :workflows, only: [:index, :show, :create, :update, :destroy]
-
-        resources :tasks, only: [:index, :show, :create, :update, :destroy]
+        resources :tasks, only: [:index, :create, :show, :update, :destroy], defaults: { taskable_type: 'Project' }
   
         resources :fields, only: [:index, :show, :create, :update, :destroy]
         resources :field_values, only: [:index, :show, :create, :update, :destroy]

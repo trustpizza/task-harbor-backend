@@ -1,21 +1,21 @@
 class Api::V1::WorkflowsController < Api::V1::BaseController
-  before_action :set_project
+  before_action :set_organization
   before_action :set_workflow, only: [:show, :update, :destroy]
 
-  # GET /api/v1/projects/:project_id/workflows
+  # GET /api/v1/workflows
   def index
-    @workflows = @project.workflows
+    @workflows = @organization.workflows
     render json: WorkflowSerializer.new(@workflows).serializable_hash
   end
 
-  # GET /api/v1/projects/:project_id/workflows/:id
+  # GET /api/v1/workflows/:id
   def show
     render json: WorkflowSerializer.new(@workflow, include: [:tasks]).serializable_hash
   end
 
-  # POST /api/v1/projects/:project_id/workflows
+  # POST /api/v1/workflows
   def create
-    @workflow = @project.workflows.new(workflow_params)
+    @workflow = @organization.workflows.new(workflow_params)
     if @workflow.save
       render json: WorkflowSerializer.new(@workflow).serializable_hash, status: :created
     else
@@ -23,7 +23,7 @@ class Api::V1::WorkflowsController < Api::V1::BaseController
     end
   end
 
-  # PATCH/PUT /api/v1/projects/:project_id/workflows/:id
+  # PATCH/PUT /api/v1/workflows/:id
   def update
     if @workflow.update(workflow_params)
       render json: WorkflowSerializer.new(@workflow).serializable_hash
@@ -32,7 +32,7 @@ class Api::V1::WorkflowsController < Api::V1::BaseController
     end
   end
 
-  # DELETE /api/v1/projects/:project_id/workflows/:id
+  # DELETE /api/v1/workflows/:id
   def destroy
     @workflow.destroy!
     head :no_content
@@ -42,16 +42,14 @@ class Api::V1::WorkflowsController < Api::V1::BaseController
 
   private
 
-  def set_project
-    @project = Project.find(params[:project_id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Project not found" }, status: :not_found
-  end
-
   def set_workflow
-    @workflow = @project.workflows.find(params[:id])
+    @workflow = @organization.workflows.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Workflow not found" }, status: :not_found
+  end
+
+  def set_organization
+    @organization = current_user.organization
   end
 
   def workflow_params

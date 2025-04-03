@@ -2,12 +2,11 @@ class Project < ApplicationRecord
   # Associations
   belongs_to :organization
   belongs_to :project_manager, class_name: 'User', foreign_key: 'project_manager_id'
-  #Ex:- :null => false
   has_many :fields, as: :fieldable, dependent: :destroy
   has_many :field_definitions, through: :fields
   has_many :field_values, through: :fields
-  has_many :tasks, dependent: :destroy
-  has_many :workflows, dependent: :destroy
+  has_many :tasks, as: :taskable, dependent: :destroy
+  has_and_belongs_to_many :workflows
 
   # Validations
   validates :name, presence: true, length: { maximum: 255 }
