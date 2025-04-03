@@ -82,12 +82,48 @@ puts "Creating Projects..."
   # Create Workflows
   workflows = []
   2.times do
-    workflows << Workflow.create!(
-      project: project,
+    workflow = Workflow.create!(
+      organization: organization,
       name: Faker::Job.title,
       description: Faker::Lorem.sentence
     )
+    workflows << workflow
+
+    3.times do
+      task = Task.create!(
+        name: Faker::Job.field,
+        description: Faker::Lorem.paragraph,
+        due_date: Faker::Date.forward(days: 15),
+        taskable:  workflow # Associate the task with the project
+      )
+  
+      # Create Fields and FieldValues for each Task
+      field_definitions.each do |field_definition|
+        field = Field.create!(
+          field_definition: field_definition,
+          fieldable: task
+        )
+  
+        # Create FieldValues through the association
+        value = generate_value(field_definition.field_type, field_definition.options)
+        field.create_field_value!(value: value) # Use create_field_value!
+      end
+    end
+  
+    # Create Fields and FieldValues for each Project
+    field_definitions.each do |field_definition|
+      field = Field.create!(
+        field_definition: field_definition,
+        fieldable: workflow
+      )
+  
+      # Create FieldValues through the association
+      value = generate_value(field_definition.field_type, field_definition.options)
+      field.create_field_value!(value: value) # Use create_field_value!
+    end
   end
+
+  
 
   puts "Creating Tasks for Project: #{project.name}"
   # Create Tasks
@@ -96,12 +132,8 @@ puts "Creating Projects..."
       name: Faker::Job.field,
       description: Faker::Lorem.paragraph,
       due_date: Faker::Date.forward(days: 15),
-      project: project
+      taskable: project # Associate the task with the project
     )
-
-    # Add task to a random workflow
-    workflow = workflows.sample
-    workflow.tasks << task if workflow
 
     # Create Fields and FieldValues for each Task
     field_definitions.each do |field_definition|
@@ -110,12 +142,9 @@ puts "Creating Projects..."
         fieldable: task
       )
 
-      # Create FieldValues
+      # Create FieldValues through the association
       value = generate_value(field_definition.field_type, field_definition.options)
-      FieldValue.create!(
-        field: field,
-        value: value
-      )
+      field.create_field_value!(value: value) # Use create_field_value!
     end
   end
 
@@ -126,13 +155,11 @@ puts "Creating Projects..."
       fieldable: project
     )
 
-    # Create FieldValues
+    # Create FieldValues through the association
     value = generate_value(field_definition.field_type, field_definition.options)
-    FieldValue.create!(
-      field: field,
-      value: value
-    )
+    field.create_field_value!(value: value) # Use create_field_value!
   end
+
 end
 
 puts "Seed data created successfully!"

@@ -6,5 +6,5 @@ class FieldSerializer
 
   belongs_to :field_definition, serializer: FieldDefinitionSerializer
   belongs_to :fieldable, polymorphic: true
-  has_many :field_values, serializer: FieldValueSerializer
+  has_one :field_value, serializer: FieldValueSerializer
 end

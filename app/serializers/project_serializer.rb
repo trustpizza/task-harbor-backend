@@ -7,5 +7,4 @@ class ProjectSerializer
   has_many :workflows, serializer: WorkflowSerializer, if: proc { |record, params| params[:include]&.include?('workflows') }
   has_many :fields, serializer: FieldSerializer, if: proc { |record, params| params[:include]&.include?('fields') }
   has_many :field_definitions, serializer: FieldDefinitionSerializer, if: proc { |record, params| params[:include]&.include?('field_definitions') }
-  has_many :field_values, serializer: FieldValueSerializer, if: proc { |record, params| params[:include]&.include?('field_values') }
 end

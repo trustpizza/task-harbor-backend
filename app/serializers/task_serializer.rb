@@ -6,5 +6,4 @@ class TaskSerializer
   belongs_to :taskable, polymorphic: true
 
   has_many :fields, serializer: FieldSerializer
-  has_many :field_values
 end

@@ -5,12 +5,12 @@ class Api::V1::TasksController < Api::V1::BaseController
   # GET /api/v1/:taskable_type/:taskable_id/tasks
   def index
     @tasks = @taskable.tasks
-    render json: TaskSerializer.new(@tasks).serializable_hash
+    render json: TaskSerializer.new(@tasks, include: [:fields]).serializable_hash
   end
 
   # GET /api/v1/:taskable_type/:taskable_id/tasks/:id
   def show
-    render json: TaskSerializer.new(@task, include: [:fields, :field_values]).serializable_hash
+    render json: TaskSerializer.new(@task, include: [:fields]).serializable_hash
   end
 
   # POST /api/v1/:taskable_type/:taskable_id/tasks

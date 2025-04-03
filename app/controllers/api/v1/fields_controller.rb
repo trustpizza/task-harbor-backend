@@ -5,12 +5,12 @@ class Api::V1::FieldsController < Api::V1::BaseController
   # GET /projects/:project_id/fields
   def index
     @fields = @project.fields
-    render json: FieldSerializer.new(@fields).serializable_hash
+    render json: FieldSerializer.new(@fields, include: %i[field_value, field_definition]).serializable_hash
   end
 
   # GET /projects/:project_id/fields/:id
   def show
-    render json: FieldSerializer.new(@field, include: [:field_values, :field_definition]).serializable_hash
+    render json: FieldSerializer.new(@field, include: [:field_value, :field_definition]).serializable_hash
   end
 
   # POST /projects/:project_id/fields
