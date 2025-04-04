@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_03_121000) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_03_234127) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -39,20 +39,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_03_121000) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "field_values", force: :cascade do |t|
-    t.text "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "field_id", null: false
-    t.index ["field_id"], name: "index_field_values_on_field_id"
-  end
-
   create_table "fields", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "field_definition_id", null: false
     t.string "fieldable_type"
     t.bigint "fieldable_id"
+    t.text "value"
     t.index ["field_definition_id"], name: "index_fields_on_field_definition_id"
     t.index ["fieldable_type", "fieldable_id"], name: "index_fields_on_fieldable"
   end
@@ -120,7 +113,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_03_121000) do
     t.index ["organization_id"], name: "index_workflows_on_organization_id"
   end
 
-  add_foreign_key "field_values", "fields"
   add_foreign_key "fields", "field_definitions"
   add_foreign_key "projects", "organizations"
   add_foreign_key "projects", "users", column: "project_manager_id"

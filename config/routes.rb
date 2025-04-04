@@ -32,7 +32,6 @@ Rails.application.routes.draw do
         resources :tasks, only: [:index, :create, :show, :update, :destroy], defaults: { taskable_type: 'Project' }
   
         resources :fields, only: [:index, :show, :create, :update, :destroy]
-        resources :field_values, only: [:index, :show, :create, :update, :destroy]
       end
   
       resources :field_definitions, only: [:index, :show, :create, :update, :destroy]

@@ -56,29 +56,27 @@ RSpec.describe Task, type: :model do
 
     it 'has many fields for a workflow' do
       task = create(:task, taskable: workflow)
-      field_def = create(:field_definition)
-      create(:field, fieldable: task, field_definition: field_def)
+      field_def = create(:field_definition, field_type: "string")
+      create(:field, fieldable: task, field_definition: field_def, value: "Sample Value")
       expect(task.fields.count).to eq(1)
     end
 
     it 'has many field_definitions through fields' do
       task = create(:task, taskable: project)
-      field_def = create(:field_definition)
-      field = create(:field, fieldable: task, field_definition: field_def)
+      field_def = create(:field_definition, field_type: "string")
+      field = create(:field, fieldable: task, field_definition: field_def, value: "Sample Value")
       expect(task.field_definitions).to include(field.field_definition)
     end
 
-    it 'has many field_values through fields' do
+    it 'stores values directly on fields' do
       task = create(:task, taskable: project)
-      field_def = create(:field_definition)
-      field = create(:field, fieldable: task, field_definition: field_def)
-      create(:field_value, field: field)
-      expect(task.field_values.count).to eq(1)
+      field_def = create(:field_definition, field_type: "string")
+      field = create(:field, fieldable: task, field_definition: field_def, value: "Sample Value")
+      expect(field.value).to eq("Sample Value")
     end
 
     it { should have_many(:fields).dependent(:destroy) }
     it { should have_many(:field_definitions).through(:fields) }
-    it { should have_many(:field_values).through(:fields) }
   end
 
   describe 'scopes' do

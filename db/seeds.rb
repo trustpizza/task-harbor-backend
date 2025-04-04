@@ -9,7 +9,6 @@ Task.destroy_all
 Project.destroy_all
 FieldDefinition.destroy_all
 Field.destroy_all
-FieldValue.destroy_all
 
 # User.destroy_all
 # Organization.destroy_all
@@ -97,29 +96,23 @@ puts "Creating Projects..."
         taskable:  workflow # Associate the task with the project
       )
   
-      # Create Fields and FieldValues for each Task
       field_definitions.each do |field_definition|
-        field = Field.create!(
+        Field.create!(
           field_definition: field_definition,
-          fieldable: task
+          fieldable: task,
+          value: generate_value(field_definition.field_type, field_definition.options)
         )
-  
-        # Create FieldValues through the association
-        value = generate_value(field_definition.field_type, field_definition.options)
-        field.create_field_value!(value: value) # Use create_field_value!
+
       end
     end
   
-    # Create Fields and FieldValues for each Project
     field_definitions.each do |field_definition|
-      field = Field.create!(
+      Field.create!(
         field_definition: field_definition,
-        fieldable: workflow
+        fieldable: workflow,
+        value: generate_value(field_definition.field_type, field_definition.options)
       )
   
-      # Create FieldValues through the association
-      value = generate_value(field_definition.field_type, field_definition.options)
-      field.create_field_value!(value: value) # Use create_field_value!
     end
   end
 
@@ -135,29 +128,22 @@ puts "Creating Projects..."
       taskable: project # Associate the task with the project
     )
 
-    # Create Fields and FieldValues for each Task
     field_definitions.each do |field_definition|
-      field = Field.create!(
+      Field.create!(
         field_definition: field_definition,
-        fieldable: task
+        fieldable: task,
+        value: generate_value(field_definition.field_type, field_definition.options)
       )
 
-      # Create FieldValues through the association
-      value = generate_value(field_definition.field_type, field_definition.options)
-      field.create_field_value!(value: value) # Use create_field_value!
     end
   end
 
-  # Create Fields and FieldValues for each Project
   field_definitions.each do |field_definition|
-    field = Field.create!(
+    Field.create!(
       field_definition: field_definition,
-      fieldable: project
+      fieldable: project,
+      value: generate_value(field_definition.field_type, field_definition.options)
     )
-
-    # Create FieldValues through the association
-    value = generate_value(field_definition.field_type, field_definition.options)
-    field.create_field_value!(value: value) # Use create_field_value!
   end
 
 end

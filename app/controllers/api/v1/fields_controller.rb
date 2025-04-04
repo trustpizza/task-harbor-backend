@@ -5,12 +5,12 @@ class Api::V1::FieldsController < Api::V1::BaseController
   # GET /projects/:project_id/fields
   def index
     @fields = @project.fields
-    render json: FieldSerializer.new(@fields, include: [:field_value]).serializable_hash
+    render json: FieldSerializer.new(@fields).serializable_hash
   end
 
   # GET /projects/:project_id/fields/:id
   def show
-    render json: FieldSerializer.new(@field, include: [:field_value]).serializable_hash
+    render json: FieldSerializer.new(@field).serializable_hash
   end
 
   # POST /projects/:project_id/fields
@@ -53,6 +53,6 @@ class Api::V1::FieldsController < Api::V1::BaseController
 
     # Only allow a list of trusted parameters through.
     def field_params
-      params.require(:field).permit(:field_definition_id) # adjust as needed
+      params.require(:field).permit(:field_definition_id, :value)
     end
 end

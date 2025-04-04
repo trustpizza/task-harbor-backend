@@ -60,9 +60,10 @@ RSpec.describe Project, type: :model do
 
     it 'has many fields' do
       project = create(:project, organization: org, project_manager: pm)
-      field_def = create(:field_definition)
-      create(:field, fieldable: project, field_definition: field_def)
+      field_def = create(:field_definition, field_type: "string")
+      create(:field, fieldable: project, field_definition: field_def, value: "Sample Value")
       expect(project.fields.count).to eq(1)
+      expect(project.fields.first.value).to eq("Sample Value")
     end
 
     it 'has many field_definitions through fields' do
@@ -72,13 +73,6 @@ RSpec.describe Project, type: :model do
       expect(project.field_definitions).to include(field.field_definition)
     end
 
-    it 'has many field_values through fields' do
-      project = create(:project, organization: org, project_manager: pm)
-      field_def = create(:field_definition)
-      field = create(:field, fieldable: project, field_definition: field_def)
-      create(:field_value, field: field)
-      expect(project.field_values.count).to eq(1)
-    end
   end
 
   describe 'scopes' do

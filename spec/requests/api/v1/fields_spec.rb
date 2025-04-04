@@ -6,16 +6,17 @@ RSpec.describe Api::V1::FieldsController, type: :request do
   let!(:project) { create(:project, organization: organization) }
   let!(:field_definition) { create(:field_definition, field_type: "string", required: false) }
 
-  let(:valid_attributes) { { field: { field_definition_id: field_definition.id.to_s } } }
-  let(:invalid_attributes) { { field: { field_definition_id: nil } } }
+  let(:valid_attributes) { { field: { field_definition_id: field_definition.id.to_s, value: "Sample Value" } } }
+  let(:invalid_attributes) { { field: { field_definition_id: nil, value: nil } } }
 
   describe 'GET /api/v1/projects/:project_id/fields' do
     it 'returns a list of fields for a project' do
-      create(:field, fieldable: project, field_definition: field_definition)
+      create(:field, fieldable: project, field_definition: field_definition, value: "Sample Value")
       get api_v1_project_fields_url(project), headers: auth_header(user)
       expect(response).to have_http_status(200)
       json_response = JSON.parse(response.body)
       expect(json_response['data'].size).to eq(1)
+      expect(json_response['data'][0]['attributes']['value']).to eq("Sample Value")
     end
   end
 
@@ -35,12 +36,13 @@ RSpec.describe Api::V1::FieldsController, type: :request do
 
   describe 'POST /api/v1/projects/:project_id/fields' do
     context 'with valid parameters' do
-      it 'creates a new field' do
+      it 'creates a new field with a value' do
         expect {
           post api_v1_project_fields_url(project), params: valid_attributes.to_json, headers: auth_header(user)
         }.to change(project.fields, :count).by(1)
         expect(response).to have_http_status(:created)
-        expect(response.content_type).to match(a_string_including('application/json'))
+        json_response = JSON.parse(response.body)
+        expect(json_response['data']['attributes']['value']).to eq("Sample Value")
       end
     end
 
@@ -61,7 +63,7 @@ RSpec.describe Api::V1::FieldsController, type: :request do
 
   describe 'PATCH /api/v1/projects/:project_id/fields/:id' do
     let(:new_field_definition) { create(:field_definition) }
-    let(:new_attributes) { { field: { field_definition_id: new_field_definition.id.to_s } } }
+    let(:new_attributes) { { field: { value: "Updated Value" } } }
 
     context 'with valid parameters' do
       it 'updates the requested field' do
@@ -74,6 +76,14 @@ RSpec.describe Api::V1::FieldsController, type: :request do
       it 'renders a JSON response with the field' do
         field = create(:field, fieldable: project, field_definition: field_definition)
         patch api_v1_project_field_url(project, field), params: new_attributes.to_json, headers: auth_header(user)
+        expect(response).to have_http_status(200)
+      end
+
+      it 'updates the value of the field' do
+        field = create(:field, fieldable: project, field_definition: field_definition, value: "Old Value")
+        patch api_v1_project_field_url(project, field), params: new_attributes.to_json, headers: auth_header(user)
+        field.reload
+        expect(field.value).to eq("Updated Value")
         expect(response).to have_http_status(200)
       end
     end
