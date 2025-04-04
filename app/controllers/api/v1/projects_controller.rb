@@ -83,7 +83,13 @@ class Api::V1::ProjectsController < Api::V1::BaseController
 
   # DRY method for determining included relationships
   def included_relationships
-    valid_includes = %w[workflows tasks field_definitions field_values fields]
-    params[:include].to_s.split(",").select { |rel| valid_includes.include?(rel) }
+    valid_includes = %w[workflows tasks field_definitions fields]
+    requested_includes = params[:include].to_s.split(",")
+
+    if requested_includes.include?("all")
+      valid_includes
+    else
+      requested_includes.select { |rel| valid_includes.include?(rel) }
+    end
   end
 end
