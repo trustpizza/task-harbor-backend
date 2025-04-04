@@ -14,7 +14,7 @@ RSpec.describe Api::V1::TasksController, type: :request do
       expect(response).to have_http_status(:success)
 
       json_response = JSON.parse(response.body)
-      expect(json_response.length).to eq(project.tasks.count)
+      expect(json_response["data"].length).to eq(project.tasks.count)
       json_response["data"].each do |task_json|
         expect(task_json["attributes"].keys).to include("name", "description", "due_date", "created_at", "updated_at")
       end
