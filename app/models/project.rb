@@ -6,7 +6,8 @@ class Project < ApplicationRecord
   has_many :field_definitions, through: :fields
   has_many :field_values, through: :fields
   has_many :tasks, as: :taskable, dependent: :destroy
-  has_and_belongs_to_many :workflows
+  has_many :project_workflows, dependent: :destroy
+  has_many :workflows, through: :project_workflows
 
   # Validations
   validates :name, presence: true, length: { maximum: 255 }
