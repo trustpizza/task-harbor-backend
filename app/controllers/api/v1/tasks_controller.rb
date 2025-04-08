@@ -5,12 +5,12 @@ class Api::V1::TasksController < Api::V1::BaseController
   # GET /api/v1/:taskable_type/:taskable_id/tasks
   def index
     @tasks = @taskable.tasks
-    render json: TaskSerializer.new(@tasks, include: [:fields]).serializable_hash
+    render json: TaskSerializer.new(@tasks, include: included_relationships, params: { include: included_relationships }).serializable_hash
   end
 
   # GET /api/v1/:taskable_type/:taskable_id/tasks/:id
   def show
-    render json: TaskSerializer.new(@task, include: [:fields]).serializable_hash
+    render json: TaskSerializer.new(@task, include: included_relationships, params: { include: included_relationships }).serializable_hash
   end
 
   # POST /api/v1/:taskable_type/:taskable_id/tasks
@@ -60,5 +60,16 @@ class Api::V1::TasksController < Api::V1::BaseController
 
   def task_params
     params.require(:task).permit(:name, :description, :due_date, :status)
+  end
+
+  def included_relationships
+    valid_includes = %w[field_definitions fields]
+    requested_includes = params[:include].to_s.split(",")
+
+    if requested_includes.include?("all")
+      valid_includes
+    else
+      requested_includes.select { |rel| valid_includes.include?(rel) }
+    end
   end
 end
