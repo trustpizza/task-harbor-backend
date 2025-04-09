@@ -20,6 +20,8 @@ Rails.application.routes.draw do
     namespace :v1 do
       get "users/me", to: "users#me"
 
+      resources :project_filters, only: [:index, :show, :create, :update, :destroy]
+
       resources :workflows, only: [:index, :show, :create, :update, :destroy] do
         resources :tasks, only: [:index, :create, :show, :update, :destroy], defaults: { taskable_type: 'Workflow' }
       end

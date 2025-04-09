@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_09_145633) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_09_214559) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -54,6 +54,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_09_145633) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "project_filters", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name"
+    t.jsonb "criteria"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_project_filters_on_user_id"
   end
 
   create_table "project_workflows", force: :cascade do |t|
@@ -118,6 +127,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_09_145633) do
   end
 
   add_foreign_key "fields", "field_definitions"
+  add_foreign_key "project_filters", "users"
   add_foreign_key "project_workflows", "projects"
   add_foreign_key "project_workflows", "workflows"
   add_foreign_key "projects", "organizations"
