@@ -38,6 +38,7 @@ RSpec.describe "Api::V1::ProjectFilters", type: :request do
     end
 
     it "returns only projects with 'Urgent' field value" do
+      # debugger
       get api_v1_projects_url, headers: auth_header(user), params: {
         filter: {
           logic: "AND",
